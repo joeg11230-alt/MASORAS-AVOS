@@ -5,9 +5,7 @@
     if(header){
       const h2=header.querySelector('h2');
       if(h2)h2.textContent='MASORAS AVOS';
-      let sub=header.querySelector('.masoras-subtitle');
-      if(!sub){sub=document.createElement('div');sub.className='masoras-subtitle';header.appendChild(sub)}
-      sub.textContent='YMA Kitchen & Maintenance Inventory';
+      [...header.children].forEach(el=>{if(el!==h2)el.remove()});
     }
     const auth=document.querySelector('#auth .card.auth');
     if(auth){
