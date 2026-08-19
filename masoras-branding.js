@@ -18,7 +18,7 @@
         brand=document.createElement('div');brand.className='login-brand';brand.style.textAlign='center';brand.style.marginBottom='18px';
         const signIn=auth.querySelector('h3');auth.insertBefore(brand,signIn||auth.firstChild);
       }
-      brand.innerHTML='<div style="font-size:28px;font-weight:800;letter-spacing:.5px">MASORAS AVOS</div><div style="margin-top:5px;color:#687386;font-weight:600">YMA Kitchen & Maintenance Inventory</div>';
+      brand.innerHTML='<div style="font-size:28px;font-weight:800;letter-spacing:.5px">MASORAS AVOS</div>';
     }
   }
   applyBranding();
