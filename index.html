@@ -8,7 +8,7 @@
   const source='https://raw.githubusercontent.com/joeg11230-alt/YMA-INVENTORY/b61255824bb0bc74b7e1e5c1120aac641cc3af3a/index.html';
   try{
     let html=await fetch(source,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('Could not load app');return r.text()});
-    html=html.replace('</body>','<script src="vendor-status.js?v=1"><\/script><script src="purchase-order-enhancements.js?v=1"><\/script></body>');
+    html=html.replace('</body>','<script src="vendor-status.js?v=1"><\/script><script src="purchase-order-enhancements.js?v=1"><\/script><script src="masoras-profile.js?v=1"><\/script></body>');
     document.open();document.write(html);document.close();
   }catch(e){document.body.innerHTML='<div style="font-family:Arial,sans-serif;padding:24px"><h2>YMA Inventory</h2><p>Could not load the app. Please refresh the page.</p></div>'}
 })();
