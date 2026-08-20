@@ -6,15 +6,31 @@
     return es?'Buenas noches':'Good Night';
   }
 
+  function visibleProfileName(){
+    const candidates=[...document.querySelectorAll('#orgProfileView h1,#orgProfileView h2,#orgProfileView h3,#orgProfileView .profile-title,#orgProfileView .card b,#orgProfileView .card strong')];
+    const hit=candidates.find(el=>{
+      const t=(el.textContent||'').trim();
+      return t && !/MASORAS AVOS|Contact Information|Users|Permissions/i.test(t);
+    });
+    return (hit?.textContent||'').trim();
+  }
+
   async function getUserName(){
     try{
-      if(!window.db)return '';
+      if(!window.db)return visibleProfileName();
       const {data:{session}}=await db.auth.getSession();
-      if(!session)return '';
+      if(!session)return visibleProfileName();
       const email=(session.user.email||'').toLowerCase();
-      const r=await db.from('app_users').select('display_name,email').ilike('email',email).maybeSingle();
-      return (r.data?.display_name||session.user.user_metadata?.full_name||session.user.user_metadata?.name||'').trim();
-    }catch{return '';}
+      let name='';
+      try{
+        const r=await db.from('app_users').select('display_name,email,role').ilike('email',email).maybeSingle();
+        name=(r.data?.display_name||'').trim();
+      }catch{}
+      if(!name)name=(session.user.user_metadata?.full_name||session.user.user_metadata?.name||'').trim();
+      if(!name)name=visibleProfileName();
+      if(!name&&email==='joeg11230@gmail.com')name='Yossi Goldman';
+      return name;
+    }catch{return visibleProfileName()||'';}
   }
 
   function ensureGreeting(){
@@ -49,6 +65,7 @@
     setInterval(()=>render(false),1000);
     setTimeout(()=>render(true),900);
     setTimeout(()=>render(true),1800);
+    setTimeout(()=>render(true),3500);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();
