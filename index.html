@@ -9,7 +9,7 @@ frame.addEventListener('load',()=>{
   try{
     const d=frame.contentDocument;
     d.title='Masoras Avos';
-    const scripts=['vendor-status.js?v=11','purchase-order-enhancements.js?v=11','masoras-profile.js?v=11','inventory-split.js?v=11','masoras-branding.js?v=11','organization-home.js?v=11','profile-save-fix.js?v=11','vendor-load-fix.js?v=1','phone-ext.js?v=2','queue-consistency-fix.js?v=1','dashboard-polish.js?v=1','product-barcode-scanner.js?v=1','create-order-fix.js?v=5','user-permissions.js?v=2','user-invite.js?v=3','dashboard-user-name.js?v=3','user-language.js?v=2','dashboard-greeting.js?v=3','vendor-save-fix.js?v=2','stock-check.js?v=1','vendor-delivery-schedule.js?v=4'];
+    const scripts=['vendor-status.js?v=11','purchase-order-enhancements.js?v=11','masoras-profile.js?v=11','inventory-split.js?v=11','masoras-branding.js?v=11','organization-home.js?v=11','profile-save-fix.js?v=11','vendor-load-fix.js?v=1','phone-ext.js?v=2','queue-consistency-fix.js?v=1','dashboard-polish.js?v=1','product-barcode-scanner.js?v=1','create-order-fix.js?v=5','user-permissions.js?v=2','user-invite.js?v=3','dashboard-user-name.js?v=3','user-language.js?v=2','dashboard-greeting.js?v=3','vendor-save-fix.js?v=2','stock-check.js?v=1','vendor-delivery-schedule.js?v=5'];
     scripts.forEach(src=>{const s=d.createElement('script');s.src=src;d.body.appendChild(s)});
   }catch(e){console.error(e)}
 });
