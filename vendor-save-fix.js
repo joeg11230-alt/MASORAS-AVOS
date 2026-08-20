@@ -2,6 +2,20 @@
   const q=id=>document.querySelector(id);
   const val=id=>q(id)?.value?.trim()||'';
   const nullable=id=>val(id)||null;
+  const DAYS=['mon','tue','wed','thu','fri','sat','sun'];
+
+  function collectDeliverySchedule(){
+    const out={};
+    DAYS.forEach(day=>{
+      const enabled=document.querySelector(`.delivery-day-enabled[data-day="${day}"]`);
+      const start=document.querySelector(`.delivery-start[data-day="${day}"]`);
+      const end=document.querySelector(`.delivery-end[data-day="${day}"]`);
+      if(enabled?.checked){
+        out[day]={enabled:true,start:start?.value||'',end:end?.value||''};
+      }
+    });
+    return out;
+  }
 
   async function saveVendor(e){
     if(e.target?.id!=='vendorForm')return;
@@ -31,6 +45,7 @@
         website:nullable('#vwebsite'),
         delivery_days:nullable('#vdays'),
         delivery_details:nullable('#vdetails'),
+        delivery_schedule:collectDeliverySchedule(),
         notes:nullable('#vnotes'),
         is_active:isActive,
         updated_at:new Date().toISOString()
@@ -60,5 +75,6 @@
     }
   }
 
+  window.collectVendorDeliverySchedule=collectDeliverySchedule;
   document.addEventListener('submit',saveVendor,true);
 })();
