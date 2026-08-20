@@ -42,12 +42,23 @@
     const d=new Date();d.setHours(h,m||0,0,0);return d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
   }
 
+  function joinDays(days){
+    if(days.length<=1)return days[0]||'';
+    if(days.length===2)return days[0]+' & '+days[1];
+    return days.slice(0,-1).join(', ')+' & '+days[days.length-1];
+  }
+
   function scheduleLines(schedule){
     const s=schedule&&typeof schedule==='object'?schedule:{};
-    return Object.entries(DAY_LABELS).filter(([k])=>s[k]?.enabled).map(([k,label])=>{
+    const groups=new Map();
+    Object.entries(DAY_LABELS).forEach(([k,label])=>{
+      if(!s[k]?.enabled)return;
       const start=formatTime(s[k]?.start),end=formatTime(s[k]?.end);
-      return `${label}: ${start&&end?start+' – '+end:start||end||'Allowed'}`;
+      const hours=start&&end?start+' – '+end:start||end||'Allowed';
+      if(!groups.has(hours))groups.set(hours,[]);
+      groups.get(hours).push(label);
     });
+    return [...groups.entries()].map(([hours,days])=>`${joinDays(days)}: ${hours}`);
   }
 
   function orgBlock(org){
