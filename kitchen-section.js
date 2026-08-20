@@ -35,6 +35,8 @@
           </div>
           <div id="kitchenSubTabs" class="row" style="margin-top:14px;border-bottom:1px solid #d9dee7;padding-bottom:10px">
             <button type="button" class="primary" data-kitchen-page="inventory">Inventory</button>
+            <button type="button" data-kitchen-page="needs">Needs Ordering</button>
+            <button type="button" data-kitchen-page="queues">Order Queue</button>
             <button type="button" data-kitchen-page="recipes">Recipes</button>
             <button type="button" data-kitchen-page="menu">Menu</button>
             <button type="button" data-kitchen-page="prep">Prep Amount</button>
@@ -43,6 +45,8 @@
             <h3 style="margin-top:0">Kitchen Dashboard</h3>
             <div class="grid">
               <button type="button" class="card" data-kitchen-page="inventory" style="text-align:left"><b>Inventory</b><div class="muted">Kitchen products and stock</div></button>
+              <button type="button" class="card" data-kitchen-page="needs" style="text-align:left"><b>Needs Ordering</b><div class="muted">Kitchen items that need to be replenished</div></button>
+              <button type="button" class="card" data-kitchen-page="queues" style="text-align:left"><b>Order Queue</b><div class="muted">Kitchen orders waiting to be placed</div></button>
               <button type="button" class="card" data-kitchen-page="recipes" style="text-align:left"><b>Recipes</b><div class="muted">Kitchen recipe library</div></button>
               <button type="button" class="card" data-kitchen-page="menu" style="text-align:left"><b>Menu</b><div class="muted">Plan and manage menus</div></button>
               <button type="button" class="card" data-kitchen-page="prep" style="text-align:left"><b>Prep Amount</b><div class="muted">Prep quantities and production amounts</div></button>
@@ -53,13 +57,18 @@
       main.prepend(section);
     }
 
+    const setKitchenActive=()=>{
+      nav.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+      kitchenBtn.classList.add('active');
+    };
+
     const openHub=()=>{
       document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
       section.classList.add('active');
-      nav.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
-      kitchenBtn.classList.add('active');
+      setKitchenActive();
       section.querySelector('#kitchenLanding').style.display='block';
       section.querySelector('#kitchenPlaceholder').style.display='none';
+      section.querySelectorAll('#kitchenSubTabs button').forEach(b=>b.classList.remove('primary'));
     };
 
     kitchenBtn.onclick=openHub;
@@ -67,13 +76,10 @@
     section.onclick=e=>{
       const btn=e.target.closest('[data-kitchen-page]');if(!btn)return;
       const page=btn.dataset.kitchenPage;
-      if(page==='inventory'){
-        if(typeof switchTab==='function')switchTab('inventory');
-        else inventoryBtn.click();
-        setTimeout(()=>{
-          nav.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
-          kitchenBtn.classList.add('active');
-        },0);
+      if(['inventory','needs','queues'].includes(page)){
+        if(typeof switchTab==='function')switchTab(page);
+        else nav.querySelector(`.tab[data-tab="${page}"]`)?.click();
+        setTimeout(setKitchenActive,0);
         return;
       }
       const titles={recipes:'Recipes',menu:'Menu',prep:'Prep Amount'};
@@ -83,6 +89,7 @@
       box.style.display='block';
       box.innerHTML=`<div class="subcard"><h3 style="margin-top:0">${esc(titles[page]||page)}</h3><div class="muted">${esc(desc[page]||'')}</div></div>`;
       section.querySelectorAll('#kitchenSubTabs button').forEach(b=>b.classList.toggle('primary',b.dataset.kitchenPage===page));
+      setKitchenActive();
     };
   }
 
