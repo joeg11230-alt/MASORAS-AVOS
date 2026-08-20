@@ -7,15 +7,14 @@
 <style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fff}#appframe{border:0;width:100%;height:100%;display:block}</style>
 </head>
 <body>
-<iframe id="appframe" src="app.html?v=1" title="Masoras Avos"></iframe>
+<iframe id="appframe" src="app.html?v=2" title="Masoras Avos"></iframe>
 <script>
 const frame=document.getElementById('appframe');
 frame.addEventListener('load',()=>{
   try{
     const d=frame.contentDocument;
-    const w=frame.contentWindow;
     d.title='Masoras Avos';
-    const scripts=['vendor-status.js?v=10','purchase-order-enhancements.js?v=10','masoras-profile.js?v=10','inventory-split.js?v=10','masoras-branding.js?v=10','organization-home.js?v=10','profile-save-fix.js?v=10'];
+    const scripts=['vendor-status.js?v=11','purchase-order-enhancements.js?v=11','masoras-profile.js?v=11','inventory-split.js?v=11','masoras-branding.js?v=11','organization-home.js?v=11','profile-save-fix.js?v=11','vendor-load-fix.js?v=1'];
     scripts.forEach(src=>{const s=d.createElement('script');s.src=src;d.body.appendChild(s)});
   }catch(e){console.error(e)}
 });
