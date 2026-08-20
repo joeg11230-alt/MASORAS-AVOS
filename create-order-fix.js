@@ -19,11 +19,14 @@
 
   function ensureModal(){
     let m=document.querySelector('#poModal');
-    if(m&&m.querySelector('#poVendorName')&&m.querySelector('#poTable'))return m;
+    const complete=m&&['#poVendorName','#poMeta','#poTable','#poTotals','#poExtra','#poActions','#poClose'].every(sel=>m.querySelector(sel));
+    if(complete)return m;
     if(m)m.remove();
     m=document.createElement('div');m.id='poModal';m.className='modal';
     m.innerHTML=`<div class="box po-modal"><div class="print-area"><div class="queue-title"><div><h2 style="margin:0">Masoras Avos Purchase Order</h2><div id="poVendorName" class="po-vendor"></div></div><button id="poClose" class="print-hide" type="button">Close</button></div><div id="poMeta" class="po-meta"></div><div id="poTable"></div><div id="poTotals" class="order-summary"></div><div id="poExtra"></div><div id="poActions" class="actions print-hide" style="margin-top:16px"></div></div></div>`;
-    document.body.appendChild(m);m.querySelector('#poClose').onclick=()=>m.classList.remove('show');return m;
+    document.body.appendChild(m);
+    m.querySelector('#poClose').onclick=()=>m.classList.remove('show');
+    return m;
   }
 
   function contactButtons(v,text,subject){
