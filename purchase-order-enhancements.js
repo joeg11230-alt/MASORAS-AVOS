@@ -19,12 +19,14 @@
   }
 
   function orderMessage(vendorId){
-    const v=getVendor(vendorId),rows=getRows(vendorId),t=totals(rows),note=rows[0]?.po_notes||'';
-    const lines=['Masoras Avos Purchase Order','Vendor: '+(v?.vendor||''),'Order Date: '+new Date().toLocaleDateString(),''];
+    const v=getVendor(vendorId),rows=getRows(vendorId),t=totals(rows),note=rows[0]?.po_notes||'',poNumber=rows[0]?.purchase_order_number||'';
+    const lines=['Masoras Avos Purchase Order'];
+    if(poNumber)lines.push('Purchase Order #: '+poNumber);
+    lines.push('Vendor: '+(v?.vendor||''),'Order Date: '+new Date().toLocaleDateString(),'');
     rows.forEach(q=>lines.push('- '+q.item_name+': '+q.qty+(q.unit?' '+q.unit:'')+' @ '+money2(priceFor(q))+' = '+money2(Number(q.qty||0)*priceFor(q))));
     lines.push('','Total Cases: '+t.cases,'Grand Total: '+money2(t.grand));
     if(note)lines.push('','Notes: '+note);
-    return {v,rows,text:lines.join('\n'),subject:'Masoras Avos Purchase Order - '+(v?.vendor||'Vendor')};
+    return {v,rows,text:lines.join('\n'),subject:'Masoras Avos Purchase Order'+(poNumber?' #'+poNumber:'')+' - '+(v?.vendor||'Vendor')};
   }
 
   window.orderText=orderMessage;
@@ -66,13 +68,15 @@
   window.openPurchaseOrder=async function(vendorId){
     const v=getVendor(vendorId),rows=getRows(vendorId),t=totals(rows); if(!rows.length)return;
     $('#poVendorName').textContent=v?.vendor||'Vendor';
-    $('#poMeta').innerHTML='<div><b>Order Date:</b> '+new Date().toLocaleDateString()+'</div><div><b>Order Received Date:</b> Pending</div>'+(v?.contact_person?'<div><b>Contact:</b> '+esc2(v.contact_person)+'</div>':'')+(v?.phone?'<div><b>Phone:</b> '+esc2(v.phone)+'</div>':'');
+    const poNumber=rows[0]?.purchase_order_number||'';
+    $('#poMeta').innerHTML='<div><b>Purchase Order #:</b> <span id="poNumberPrint">'+esc2(poNumber||'Not Set')+'</span></div><div><b>Order Date:</b> '+new Date().toLocaleDateString()+'</div><div><b>Order Received Date:</b> Pending</div>'+(v?.contact_person?'<div><b>Contact:</b> '+esc2(v.contact_person)+'</div>':'')+(v?.phone?'<div><b>Phone:</b> '+esc2(v.phone)+'</div>':'');
     $('#poTable').innerHTML='<table><tr><th>Item</th><th>SKU</th><th>Cases</th><th>Unit</th><th>Unit Price</th><th>Total</th></tr>'+rows.map(q=>{const item=getItem(q.inventory_item_id),price=priceFor(q);return '<tr><td><b>'+esc2(q.item_name)+'</b></td><td>'+esc2(item?.sku||'')+'</td><td>'+q.qty+'</td><td>'+esc2(q.unit||'')+'</td><td>'+money2(price)+'</td><td>'+money2(Number(q.qty||0)*price)+'</td></tr>'}).join('')+'</table>';
     $('#poTotals').innerHTML='<span>Total Cases: '+t.cases+'</span><span class="po-total">Grand Total: '+money2(t.grand)+'</span>';
 
     let extra=document.querySelector('#poExtra');
     if(!extra){extra=document.createElement('div');extra.id='poExtra';$('#poTotals').after(extra)}
-    extra.innerHTML='<div style="margin-top:14px"><label><b>Purchase Order Notes</b><textarea id="poNotes" rows="3" placeholder="Delivery instructions, substitutions, special requests…">'+esc2(rows[0]?.po_notes||'')+'</textarea></label><div class="row print-hide" style="margin-top:6px"><button id="savePoNotes" type="button">Save Notes</button></div><div id="poPrintedNotes" style="margin-top:8px;white-space:pre-wrap">'+(rows[0]?.po_notes?'<b>Notes:</b> '+esc2(rows[0].po_notes):'')+'</div><div id="poInvoiceMatch"></div></div>';
+    extra.innerHTML='<div style="margin-top:14px"><div class="print-hide" style="margin-bottom:12px"><label><b>Purchase Order Number</b><div class="row" style="margin-top:5px"><input id="poNumberInput" type="text" placeholder="Enter your PO number" value="'+esc2(poNumber)+'" style="max-width:260px"><button id="savePoNumber" type="button">Save PO Number</button></div></label></div><label><b>Purchase Order Notes</b><textarea id="poNotes" rows="3" placeholder="Delivery instructions, substitutions, special requests…">'+esc2(rows[0]?.po_notes||'')+'</textarea></label><div class="row print-hide" style="margin-top:6px"><button id="savePoNotes" type="button">Save Notes</button></div><div id="poPrintedNotes" style="margin-top:8px;white-space:pre-wrap">'+(rows[0]?.po_notes?'<b>Notes:</b> '+esc2(rows[0].po_notes):'')+'</div><div id="poInvoiceMatch"></div></div>';
+    extra.querySelector('#savePoNumber').onclick=async()=>{const num=extra.querySelector('#poNumberInput').value.trim()||null;try{await saveAcrossRows(rows,{purchase_order_number:num});document.querySelector('#poNumberPrint').textContent=num||'Not Set';$('#poActions').innerHTML='<button onclick="window.print()"><i class="bi bi-printer-fill"></i> Print Order</button><button class="primary" id="poVendorProfile">Vendor Profile</button>'+window.queueContactButtons(vendorId)+'<button class="success" id="poCloseOrder">Close Order</button>';$('#poVendorProfile').onclick=()=>{$('#poModal').classList.remove('show');switchTab('vendors');openVendor(vendorId)};$('#poCloseOrder').onclick=()=>closeVendorOrder(vendorId);alert('Purchase order number saved.')}catch(e){alert(e.message)}};
     extra.querySelector('#savePoNotes').onclick=async()=>{const note=extra.querySelector('#poNotes').value.trim()||null;try{await saveAcrossRows(rows,{po_notes:note});extra.querySelector('#poPrintedNotes').innerHTML=note?'<b>Notes:</b> '+esc2(note):'';alert('Purchase order notes saved.')}catch(e){alert(e.message)}};
 
     $('#poActions').innerHTML='<button onclick="window.print()"><i class="bi bi-printer-fill"></i> Print Order</button><button class="primary" id="poVendorProfile">Vendor Profile</button>'+window.queueContactButtons(vendorId)+'<button class="success" id="poCloseOrder">Close Order</button>';
