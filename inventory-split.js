@@ -48,6 +48,14 @@
     const vendorLabel=document.querySelector('#vendor')?.closest('label');
     if(vendorLabel)vendorLabel.before(label); else form.prepend(label);
   }
+  if(form&&!document.querySelector('#lowStockLevel')){
+    const low=document.createElement('label');
+    low.innerHTML='Low Stock Alert Qty<input id="lowStockLevel" type="number" min="0" step="1" placeholder="e.g. 10">';
+    const reorder=document.createElement('label');
+    reorder.innerHTML='Replenish At Qty<input id="reorderPoint" type="number" min="0" step="1" placeholder="e.g. 5">';
+    const target=document.querySelector('#target')?.closest('label');
+    if(target){target.after(reorder);target.after(low)}else{form.append(low,reorder)}
+  }
 
   const modal=document.querySelector('#modal');
   if(modal)new MutationObserver(()=>{
@@ -56,6 +64,9 @@
     const item=id?items.find(x=>Number(x.id)===id):null;
     const sel=document.querySelector('#inventoryType');
     if(sel)sel.value=item?.inventory_type||currentType;
+    const low=document.querySelector('#lowStockLevel'),reorder=document.querySelector('#reorderPoint');
+    if(low)low.value=item?.low_stock_level??'';
+    if(reorder)reorder.value=item?.reorder_point??'';
   }).observe(modal,{attributes:true,attributeFilter:['class']});
 
   if(form){
@@ -68,7 +79,10 @@
         vendor:$('#vendor').value.trim(),item:$('#item').value.trim(),brand:$('#brand').value.trim()||null,sku:$('#sku').value.trim()||null,
         category:$('#category').value.trim()||null,storage_location:$('#storage').value.trim()||null,unit:$('#unit').value.trim()||null,
         case_pack:$('#casepack').value.trim()||null,pounds_per_case:$('#pounds').value||null,price:$('#price').value||null,
-        qty_on_hand:$('#qty').value||0,target_stock:$('#target').value||0,last_ordered_date:$('#date').value||null,
+        qty_on_hand:$('#qty').value||0,target_stock:$('#target').value||0,
+        low_stock_level:document.querySelector('#lowStockLevel')?.value||null,
+        reorder_point:document.querySelector('#reorderPoint')?.value||null,
+        last_ordered_date:$('#date').value||null,
         product_description:$('#description').value.trim()||null,notes:$('#notes').value.trim()||null,barcode:$('#barcode').value.trim()||null,
         updated_at:new Date().toISOString()
       };
