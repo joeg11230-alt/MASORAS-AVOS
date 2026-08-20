@@ -11,7 +11,8 @@
     const profile=nav.querySelector('.tab[data-tab="profile"]');
     inventory=nav.querySelector('.tab[data-tab="inventory"]');
     const kitchenHub=nav.querySelector('#kitchenMainTab');
-    const maintenance=nav.querySelector('.tab[data-tab="maintenanceInventory"]');
+    const maintenanceInventory=nav.querySelector('.tab[data-tab="maintenanceInventory"]');
+    const maintenanceHub=nav.querySelector('#maintenanceMainTab');
     const needs=nav.querySelector('.tab[data-tab="needs"]');
     const queues=nav.querySelector('.tab[data-tab="queues"]');
     const receiving=nav.querySelector('.tab[data-tab="receiving"]');
@@ -20,13 +21,14 @@
     if(profile) profile.textContent='Organization Profile';
     if(inventory){inventory.textContent='Inventory';if(kitchenHub)inventory.style.display='none';}
     if(kitchenHub)kitchenHub.textContent='KITCHEN';
-    if(maintenance) maintenance.textContent='Maintenance Inventory';
+    if(maintenanceInventory){maintenanceInventory.textContent='Inventory';if(maintenanceHub)maintenanceInventory.style.display='none';}
+    if(maintenanceHub)maintenanceHub.textContent='MAINTENANCE';
 
-    [profile,kitchenHub||inventory,maintenance,needs,queues,receiving,vendors].filter(Boolean).forEach(btn=>nav.appendChild(btn));
+    [profile,kitchenHub||inventory,maintenanceHub||maintenanceInventory,needs,queues,receiving,vendors].filter(Boolean).forEach(btn=>nav.appendChild(btn));
 
-    const wanted=new Set(['profile','inventory','maintenanceInventory','needs','queues','receiving','vendors','kitchenHub']);
+    const wanted=new Set(['profile','inventory','maintenanceInventory','needs','queues','receiving','vendors','kitchenHub','maintenanceHub']);
     nav.querySelectorAll('.tab').forEach(btn=>{
-      if(btn.id==='kitchenMainTab')return;
+      if(btn.id==='kitchenMainTab'||btn.id==='maintenanceMainTab')return;
       if(!wanted.has(btn.dataset.tab)) btn.style.display='none';
     });
   }
