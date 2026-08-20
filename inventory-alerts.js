@@ -1,6 +1,7 @@
 (()=>{
   const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
   let emailCheckBusy=false;
+  let alertsCollapsed=true;
 
   function classify(item){
     if(item?.is_active===false)return null;
@@ -16,8 +17,12 @@
   function ensureStyles(){
     if(document.querySelector('#inventoryAlertStyles'))return;
     const s=document.createElement('style');s.id='inventoryAlertStyles';s.textContent=`
-      #inventoryAlertsCard{margin:0 0 14px;border:1px solid #d9dee7;border-radius:12px;background:#fff;padding:14px}
-      .inventory-alert-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+      #inventoryAlertsCard{margin:0 0 14px;border:1px solid #d9dee7;border-radius:12px;background:#fff;padding:0;overflow:hidden}
+      .inventory-alert-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:14px;cursor:pointer;background:#fff}
+      .inventory-alert-head:hover{background:#fafbfd}
+      .inventory-alert-head-right{display:flex;align-items:center;gap:10px}
+      .inventory-alert-toggle{font-size:20px;font-weight:900;line-height:1}
+      .inventory-alert-body{padding:0 14px 14px}
       .inventory-alert-list{display:grid;gap:8px;margin-top:10px}
       .inventory-alert-row{display:grid;grid-template-columns:minmax(180px,1fr) 120px 110px 130px;gap:10px;align-items:center;border:1px solid #e6eaf0;border-radius:9px;padding:9px;background:#fafbfd}
       .alert-pill{display:inline-block;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;text-align:center}
@@ -50,8 +55,12 @@
     ensureStyles();const card=ensureCard();if(!card)return;
     const alerts=getItems().map(item=>({item,status:classify(item)})).filter(x=>x.status).sort((a,b)=>b.status.priority-a.status.priority||String(a.item.item||'').localeCompare(String(b.item.item||'')));
     const count=alerts.length;
-    card.innerHTML=`<div class="inventory-alert-head"><div><h3 style="margin:0">Inventory Alerts</h3><div class="muted">Low stock, replenish, and out-of-stock items</div></div><span class="badge">${count} alert${count===1?'':'s'}</span></div>`+
-      (count?`<div class="inventory-alert-list">${alerts.map(({item,status})=>`<div class="inventory-alert-row"><div class="inventory-alert-name"><b>${esc(item.item||'Item')}</b><div class="muted">${esc((item.inventory_type||'Kitchen')+' Inventory')} • ${esc(item.vendor||'')}</div></div><div><b>Qty:</b> ${Number(item.qty_on_hand||0)}</div><div><b>Target:</b> ${Number(item.target_stock||0)}</div><div><span class="alert-pill alert-${status.level}">${status.label}</span></div></div>`).join('')}</div>`:`<div class="muted" style="margin-top:10px">No inventory alerts right now.</div>`);
+    card.innerHTML=`<div class="inventory-alert-head" id="inventoryAlertsToggle" role="button" tabindex="0" aria-expanded="${alertsCollapsed?'false':'true'}"><div><h3 style="margin:0">Inventory Alerts</h3><div class="muted">Low stock, replenish, and out-of-stock items</div></div><div class="inventory-alert-head-right"><span class="badge">${count} alert${count===1?'':'s'}</span><span class="inventory-alert-toggle">${alertsCollapsed?'▸':'▾'}</span></div></div><div class="inventory-alert-body" style="display:${alertsCollapsed?'none':'block'}">`+
+      (count?`<div class="inventory-alert-list">${alerts.map(({item,status})=>`<div class="inventory-alert-row"><div class="inventory-alert-name"><b>${esc(item.item||'Item')}</b><div class="muted">${esc((item.inventory_type||'Kitchen')+' Inventory')} • ${esc(item.vendor||'')}</div></div><div><b>Qty:</b> ${Number(item.qty_on_hand||0)}</div><div><b>Target:</b> ${Number(item.target_stock||0)}</div><div><span class="alert-pill alert-${status.level}">${status.label}</span></div></div>`).join('')}</div>`:`<div class="muted" style="margin-top:10px">No inventory alerts right now.</div>`)+`</div>`;
+    const toggle=card.querySelector('#inventoryAlertsToggle');
+    const flip=()=>{alertsCollapsed=!alertsCollapsed;renderAlerts();};
+    toggle.onclick=flip;
+    toggle.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();flip();}};
   }
 
   function decorateCards(){
