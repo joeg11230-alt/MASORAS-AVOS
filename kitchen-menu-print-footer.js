@@ -1,0 +1,4 @@
+(()=>{
+ function apply(){document.querySelectorAll('#kitchenPlaceholder .menu-month').forEach(m=>{if(m.querySelector('.menu-print-footer'))return;const f=document.createElement('div');f.className='menu-print-footer';f.textContent='Powered by MASORAS AVOS  •  Driven by ALLES BSD  •  Designed by YGEE2026';f.style.cssText='padding:5px 8px;text-align:center;font-size:10px;font-weight:800;letter-spacing:.4px;color:#475569;border-top:1px solid #dbe3ec;background:#fff';m.appendChild(f);});}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply);else apply();new MutationObserver(apply).observe(document.documentElement,{childList:true,subtree:true});setTimeout(apply,500);setTimeout(apply,1500);
+})();
