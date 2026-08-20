@@ -19,10 +19,10 @@
     const vendors=nav.querySelector('.tab[data-tab="vendors"]');
 
     if(profile) profile.textContent='Organization Profile';
-    if(inventory){inventory.textContent='Inventory';if(kitchenHub)inventory.style.display='none';}
-    if(kitchenHub)kitchenHub.textContent='KITCHEN';
-    if(maintenanceInventory){maintenanceInventory.textContent='Inventory';if(maintenanceHub)maintenanceInventory.style.display='none';}
-    if(maintenanceHub)maintenanceHub.textContent='MAINTENANCE';
+    if(inventory){inventory.textContent='Inventory';inventory.hidden=!!kitchenHub;inventory.style.display=kitchenHub?'none':'';}
+    if(kitchenHub)kitchenHub.textContent='Kitchen';
+    if(maintenanceInventory){maintenanceInventory.textContent='Inventory';maintenanceInventory.hidden=!!maintenanceHub;maintenanceInventory.style.display=maintenanceHub?'none':'';}
+    if(maintenanceHub)maintenanceHub.textContent='Maintenance';
 
     [profile,kitchenHub||inventory,maintenanceHub||maintenanceInventory,needs,queues,receiving,vendors].filter(Boolean).forEach(btn=>nav.appendChild(btn));
 
