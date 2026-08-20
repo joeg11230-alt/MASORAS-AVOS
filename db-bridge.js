@@ -1,0 +1,1 @@
+(()=>{try{if(typeof db!=='undefined'&&db)window.db=db;}catch(e){console.error('DB bridge',e)}})();
