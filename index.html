@@ -1,17 +1,24 @@
 <!doctype html>
 <html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Masoras Avos</title></head>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Masoras Avos</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fff}#appframe{border:0;width:100%;height:100%;display:block}</style>
+</head>
 <body>
-<div style="font-family:Arial,sans-serif;padding:24px"><strong>MASORAS AVOS</strong></div>
+<iframe id="appframe" src="app.html?v=1" title="Masoras Avos"></iframe>
 <script>
-(async()=>{
-  const source='https://raw.githubusercontent.com/joeg11230-alt/MASORAS-AVOS/b61255824bb0bc74b7e1e5c1120aac641cc3af3a/index.html';
+const frame=document.getElementById('appframe');
+frame.addEventListener('load',()=>{
   try{
-    let html=await fetch(source,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('Could not load app');return r.text()});
-    html=html.replace('</body>','<script src="vendor-status.js?v=4"><\/script><script src="purchase-order-enhancements.js?v=4"><\/script><script src="masoras-profile.js?v=4"><\/script><script src="inventory-split.js?v=4"><\/script><script src="masoras-branding.js?v=4"><\/script><script src="organization-home.js?v=4"><\/script><script src="profile-save-fix.js?v=4"><\/script></body>');
-    document.open();document.write(html);document.close();
-  }catch(e){document.body.innerHTML='<div style="font-family:Arial,sans-serif;padding:24px"><h2>MASORAS AVOS</h2><p>Could not load the app. Please reload the page.</p></div>'}
-})();
+    const d=frame.contentDocument;
+    const w=frame.contentWindow;
+    d.title='Masoras Avos';
+    const scripts=['vendor-status.js?v=10','purchase-order-enhancements.js?v=10','masoras-profile.js?v=10','inventory-split.js?v=10','masoras-branding.js?v=10','organization-home.js?v=10','profile-save-fix.js?v=10'];
+    scripts.forEach(src=>{const s=d.createElement('script');s.src=src;d.body.appendChild(s)});
+  }catch(e){console.error(e)}
+});
 </script>
 </body>
 </html>
