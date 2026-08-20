@@ -64,6 +64,18 @@
     return DAYS.filter(([key])=>s[key]?.enabled).map(([key,label])=>`${label}: ${s[key]?.start||s[key]?.end?`${fmt(s[key]?.start||'')}${s[key]?.start&&s[key]?.end?' – ':''}${fmt(s[key]?.end||'')}`:'Allowed'}`).join('<br>');
   }
 
+  function removeLegacyDeliveryText(card,v){
+    const legacy=String(v?.delivery_days||'').trim();
+    if(!legacy)return;
+    [...card.children].forEach(el=>{
+      if(el.matches('h3,.actions,.vendor-delivery-summary,.vendor-status-badge'))return;
+      if((el.textContent||'').trim()===legacy)el.remove();
+    });
+    [...card.childNodes].forEach(node=>{
+      if(node.nodeType===Node.TEXT_NODE && (node.textContent||'').trim()===legacy)node.remove();
+    });
+  }
+
   const oldRender=window.renderVendors;
   if(typeof oldRender==='function'){
     window.renderVendors=function(){
@@ -71,6 +83,7 @@
       document.querySelectorAll('#vgrid .card[data-vid]').forEach(card=>{
         const v=typeof vendorById==='function'?vendorById(Number(card.dataset.vid)):null;
         if(!v)return;
+        removeLegacyDeliveryText(card,v);
         let box=card.querySelector('.vendor-delivery-summary');
         const html=deliverySummaryFromObject(v.delivery_schedule);
         if(!html){box?.remove();return;}
@@ -80,6 +93,13 @@
     };
   }
 
-  document.addEventListener('click',e=>{if(e.target.closest('#addVendor'))setTimeout(()=>{ensureScheduleUI();hideLegacyField();clearSchedule()},100);if(e.target.closest('.vendor-link'))setTimeout(fillSchedule,120);});
-  setTimeout(()=>{ensureScheduleUI();hideLegacyField()},700);setTimeout(()=>{ensureScheduleUI();hideLegacyField()},1600);
+  function cleanVisibleCards(){
+    document.querySelectorAll('#vgrid .card[data-vid]').forEach(card=>{
+      const v=typeof vendorById==='function'?vendorById(Number(card.dataset.vid)):null;
+      if(v)removeLegacyDeliveryText(card,v);
+    });
+  }
+
+  document.addEventListener('click',e=>{if(e.target.closest('#addVendor'))setTimeout(()=>{ensureScheduleUI();hideLegacyField();clearSchedule()},100);if(e.target.closest('.vendor-link'))setTimeout(fillSchedule,120);if(e.target.closest('[data-tab="vendors"]'))setTimeout(cleanVisibleCards,120);});
+  setTimeout(()=>{ensureScheduleUI();hideLegacyField();cleanVisibleCards()},700);setTimeout(()=>{ensureScheduleUI();hideLegacyField();cleanVisibleCards()},1600);
 })();
