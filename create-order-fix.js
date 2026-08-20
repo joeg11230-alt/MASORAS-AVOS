@@ -3,7 +3,7 @@
   const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
   const money=x=>'$'+n(x).toFixed(2);
   const digits=s=>String(s||'').replace(/\D/g,'');
-  const DAY_LABELS={mon:'Monday',tue:'Tuesday',wed:'Wednesday',thu:'Thursday',fri:'Friday',sat:'Saturday',sun:'Sunday'};
+  const DAY_LABELS={sun:'Sunday',mon:'Monday',tue:'Tuesday',wed:'Wednesday',thu:'Thursday',fri:'Friday',sat:'Saturday'};
 
   async function fetchOrderData(vendorId){
     const [qr,vr,or]=await Promise.all([
@@ -21,11 +21,11 @@
 
   function ensureModal(){
     let m=document.querySelector('#poModal');
-    const complete=m&&['#poOrgInfo','#poVendorName','#poMeta','#poTable','#poTotals','#poExtra','#poActions','#poClose'].every(sel=>m.querySelector(sel));
+    const complete=m&&['#poOrgInfo','#poDelivery','#poVendorName','#poMeta','#poTable','#poTotals','#poExtra','#poActions','#poClose'].every(sel=>m.querySelector(sel));
     if(complete)return m;
     if(m)m.remove();
     m=document.createElement('div');m.id='poModal';m.className='modal';
-    m.innerHTML=`<div class="box po-modal"><div class="print-area"><div class="queue-title"><div><h2 style="margin:0">Masoras Avos Purchase Order</h2><div id="poVendorName" class="po-vendor"></div></div><button id="poClose" class="print-hide" type="button">Close</button></div><div id="poOrgInfo" style="margin:12px 0;padding:12px;border:1px solid #d9dee7;border-radius:10px;background:#fbfdff"></div><div id="poMeta" class="po-meta"></div><div id="poTable"></div><div id="poTotals" class="order-summary"></div><div id="poExtra"></div><div id="poActions" class="actions print-hide" style="margin-top:16px"></div></div></div>`;
+    m.innerHTML=`<div class="box po-modal"><div class="print-area"><div class="queue-title"><div><h2 style="margin:0">Masoras Avos Purchase Order</h2><div id="poVendorName" class="po-vendor"></div></div><button id="poClose" class="print-hide" type="button">Close</button></div><div id="poOrgInfo" style="margin:12px 0;padding:12px;border:1px solid #d9dee7;border-radius:10px;background:#fbfdff"></div><div id="poDelivery" style="margin:12px 0;padding:12px;border:2px solid #1f4e78;border-radius:10px;background:#f5f9ff"></div><div id="poMeta" class="po-meta"></div><div id="poTable"></div><div id="poTotals" class="order-summary"></div><div id="poExtra"></div><div id="poActions" class="actions print-hide" style="margin-top:16px"></div></div></div>`;
     document.body.appendChild(m);
     m.querySelector('#poClose').onclick=()=>m.classList.remove('show');
     return m;
@@ -50,9 +50,14 @@
     });
   }
 
-  function orgBlock(org,schedule){
-    const addr=formatAddress(org),lines=scheduleLines(schedule);
-    return `<div style="font-size:18px;font-weight:900">${esc(org.organization_name||'Masoras Avos')}</div>${org.contact_name?`<div><b>Contact:</b> ${esc(org.contact_name)}</div>`:''}${addr?`<div><b>Address:</b> ${esc(addr)}</div>`:''}${org.phone?`<div><b>Phone:</b> ${esc(org.phone)}${org.phone_ext?` Ext. ${esc(org.phone_ext)}`:''}</div>`:''}${org.cell?`<div><b>Cell:</b> ${esc(org.cell)}</div>`:''}${org.email?`<div><b>Email:</b> ${esc(org.email)}</div>`:''}${lines.length?`<div style="margin-top:8px"><b>Approved Delivery Days & Hours:</b><br>${lines.map(x=>esc(x)).join('<br>')}</div>`:''}`;
+  function orgBlock(org){
+    const addr=formatAddress(org);
+    return `<div style="font-size:18px;font-weight:900">${esc(org.organization_name||'Masoras Avos')}</div>${org.contact_name?`<div><b>Contact:</b> ${esc(org.contact_name)}</div>`:''}${addr?`<div><b>Address:</b> ${esc(addr)}</div>`:''}${org.phone?`<div><b>Phone:</b> ${esc(org.phone)}${org.phone_ext?` Ext. ${esc(org.phone_ext)}`:''}</div>`:''}${org.cell?`<div><b>Cell:</b> ${esc(org.cell)}</div>`:''}${org.email?`<div><b>Email:</b> ${esc(org.email)}</div>`:''}`;
+  }
+
+  function deliveryBlock(schedule){
+    const lines=scheduleLines(schedule);
+    return `<div style="font-size:16px;font-weight:900;margin-bottom:5px">Allowed Delivery Days & Hours</div>${lines.length?lines.map(x=>`<div>${esc(x)}</div>`).join(''):'<div class="muted">No delivery schedule has been set for this vendor.</div>'}`;
   }
 
   function messageHeader(org,schedule){
@@ -62,7 +67,7 @@
     if(org.phone)lines.push('Phone: '+org.phone+(org.phone_ext?' Ext. '+org.phone_ext:''));
     if(org.cell)lines.push('Cell: '+org.cell);
     if(org.email)lines.push('Email: '+org.email);
-    const delivery=scheduleLines(schedule);if(delivery.length)lines.push('','Approved Delivery Days & Hours:',...delivery);
+    const delivery=scheduleLines(schedule);if(delivery.length)lines.push('','Allowed Delivery Days & Hours:',...delivery);
     return lines;
   }
 
@@ -83,7 +88,8 @@
       const price=q=>q.unit_price!=null?n(q.unit_price):n(itemMap[q.inventory_item_id]?.price);
       const m=ensureModal(),cases=r.reduce((s,q)=>s+n(q.qty),0),grand=r.reduce((s,q)=>s+n(q.qty)*price(q),0);
       m.querySelector('#poVendorName').textContent=v?.vendor||'Vendor';
-      m.querySelector('#poOrgInfo').innerHTML=orgBlock(org,v?.delivery_schedule||{});
+      m.querySelector('#poOrgInfo').innerHTML=orgBlock(org);
+      m.querySelector('#poDelivery').innerHTML=deliveryBlock(v?.delivery_schedule||{});
       m.querySelector('#poMeta').innerHTML=`<div><b>Order Date:</b> ${new Date().toLocaleDateString()}</div><div><b>Order Received Date:</b> Pending</div>${v?.contact_person?`<div><b>Vendor Contact:</b> ${esc(v.contact_person)}</div>`:''}${v?.phone?`<div><b>Vendor Phone:</b> ${esc(v.phone)}${v.phone_ext?` ext. ${esc(v.phone_ext)}`:''}</div>`:''}${v?.email?`<div><b>Vendor Email:</b> ${esc(v.email)}</div>`:''}`;
       m.querySelector('#poTable').innerHTML='<table><tr><th>Item</th><th>SKU</th><th>Cases</th><th>Unit</th><th>Unit Price</th><th>Total</th></tr>'+r.map(q=>{const p=price(q);return `<tr><td><b>${esc(q.item_name)}</b></td><td>${esc(itemMap[q.inventory_item_id]?.sku||'')}</td><td>${n(q.qty)}</td><td>${esc(q.unit||'')}</td><td>${money(p)}</td><td>${money(n(q.qty)*p)}</td></tr>`}).join('')+'</table>';
       m.querySelector('#poTotals').innerHTML=`<span>Total Cases: ${cases}</span><span class="po-total">Grand Total: ${money(grand)}</span>`;
