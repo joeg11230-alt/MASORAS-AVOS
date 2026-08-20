@@ -7,6 +7,7 @@
     const inventoryBtn=nav?.querySelector('.tab[data-tab="inventory"]');
     if(!nav||!main||!inventoryBtn)return;
 
+    inventoryBtn.hidden=true;
     inventoryBtn.style.display='none';
     inventoryBtn.textContent='Inventory';
 
@@ -16,7 +17,7 @@
       kitchenBtn.id='kitchenMainTab';
       kitchenBtn.type='button';
       kitchenBtn.className='tab';
-      kitchenBtn.textContent='KITCHEN';
+      kitchenBtn.textContent='Kitchen';
       kitchenBtn.dataset.tab='kitchenHub';
       const profile=nav.querySelector('.tab[data-tab="profile"]');
       if(profile)profile.after(kitchenBtn);else nav.prepend(kitchenBtn);
@@ -30,7 +31,7 @@
       section.innerHTML=`
         <div class="card">
           <div class="section-head" style="margin-top:0;border-top:0;padding-top:0">
-            <div><h2 style="margin:0">KITCHEN</h2><div class="muted">Kitchen operations</div></div>
+            <div><h2 style="margin:0">Kitchen</h2><div class="muted">Kitchen operations</div></div>
           </div>
           <div id="kitchenSubTabs" class="row" style="margin-top:14px;border-bottom:1px solid #d9dee7;padding-bottom:10px">
             <button type="button" class="primary" data-kitchen-page="inventory">Inventory</button>
