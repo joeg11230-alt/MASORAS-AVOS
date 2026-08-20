@@ -21,9 +21,9 @@
       if(!on?.checked)return;
       const s=document.querySelector(`.delivery-start[data-day="${key}"]`)?.value||'';
       const e=document.querySelector(`.delivery-end[data-day="${key}"]`)?.value||'';
-      parts.push(`${label}${s||e?` ${fmt(s)}${s&&e?'–':''}${fmt(e)}`:''}`);
+      parts.push(`${label}: ${s||e?`${fmt(s)}${s&&e?' – ':''}${fmt(e)}`:'Allowed'}`);
     });
-    return parts.length?parts.join(' • '):'No delivery days selected';
+    return parts.length?parts.join(' | '):'No delivery days selected';
   }
 
   function updateSummary(){const s=document.querySelector('#deliveryScheduleSummary');if(s)s.textContent=summaryText();}
@@ -39,7 +39,7 @@
     let wrap=document.querySelector('#vendorDeliverySchedule');if(wrap)return;
     wrap=document.createElement('div');wrap.id='vendorDeliverySchedule';wrap.className='full';
     wrap.style.cssText='border:1px solid #d9dee7;border-radius:10px;background:#fbfdff;overflow:hidden';
-    wrap.innerHTML=`<button id="deliveryScheduleHeader" type="button" style="width:100%;border:0;border-radius:0;background:#fbfdff;padding:12px;display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left"><span><span style="font-weight:800">Allowed Delivery Days & Hours</span><span id="deliveryScheduleSummary" class="muted" style="display:block;margin-top:3px">No delivery days selected</span></span><span id="deliveryScheduleToggle" aria-expanded="false" style="font-size:20px;font-weight:800">▸</span></button><div id="deliveryScheduleBody" style="display:none;padding:0 12px 12px"><div class="muted" style="margin-bottom:8px">Select the days this vendor may deliver and the allowed time window.</div><div id="deliveryScheduleRows" style="display:grid;gap:7px"></div></div>`;
+    wrap.innerHTML=`<button id="deliveryScheduleHeader" type="button" style="width:100%;border:0;border-radius:0;background:#fbfdff;padding:12px;display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left"><span><span style="font-weight:800">Allowed Delivery Days & Hours</span><span id="deliveryScheduleSummary" class="muted" style="display:block;margin-top:3px">No delivery days selected</span></span><span id="deliveryScheduleToggle" aria-expanded="false" style="font-size:20px;font-weight:800">▸</span></button><div id="deliveryScheduleBody" style="display:none;padding:0 12px 12px"><div class="muted" style="margin-bottom:8px">Select each day and the allowed delivery hours for that day.</div><div id="deliveryScheduleRows" style="display:grid;gap:7px"></div></div>`;
     const actions=form.querySelector('.full.row');form.insertBefore(wrap,actions||null);
     const rows=wrap.querySelector('#deliveryScheduleRows');
     rows.innerHTML=DAYS.map(([key,label])=>`<div style="display:grid;grid-template-columns:120px 1fr 1fr;gap:8px;align-items:center"><label style="display:flex;gap:7px;align-items:center"><input type="checkbox" class="delivery-day-enabled" data-day="${key}" style="width:auto"> ${label}</label><input type="time" class="delivery-start" data-day="${key}" disabled><input type="time" class="delivery-end" data-day="${key}" disabled></div>`).join('');
@@ -58,16 +58,28 @@
   }
 
   function clearSchedule(){DAYS.forEach(([key])=>{const enabled=document.querySelector(`.delivery-day-enabled[data-day="${key}"]`),start=document.querySelector(`.delivery-start[data-day="${key}"]`),end=document.querySelector(`.delivery-end[data-day="${key}"]`);if(enabled)enabled.checked=false;if(start){start.value='';start.disabled=true}if(end){end.value='';end.disabled=true}});updateSummary();setCollapsed(true);}
-  function collectSchedule(){const out={};DAYS.forEach(([key])=>{const enabled=document.querySelector(`.delivery-day-enabled[data-day="${key}"]`),start=document.querySelector(`.delivery-start[data-day="${key}"]`),end=document.querySelector(`.delivery-end[data-day="${key}"]`);if(enabled?.checked)out[key]={enabled:true,start:start?.value||'',end:end?.value||''};});return out;}
 
-  async function saveSchedule(){
-    let id=Number(document.querySelector('#vid')?.value||0);
-    if(!id){const name=document.querySelector('#vname')?.value?.trim();if(name){const r=await db.from('vendors').select('id').eq('vendor',name).order('id',{ascending:false}).limit(1).maybeSingle();id=Number(r.data?.id||0)}}
-    if(!id)return;
-    const r=await db.from('vendors').update({delivery_schedule:collectSchedule(),updated_at:new Date().toISOString()}).eq('id',id);if(r.error)console.error('Delivery schedule save failed',r.error);
+  function deliverySummaryFromObject(schedule){
+    const s=schedule&&typeof schedule==='object'?schedule:{};
+    return DAYS.filter(([key])=>s[key]?.enabled).map(([key,label])=>`${label}: ${s[key]?.start||s[key]?.end?`${fmt(s[key]?.start||'')}${s[key]?.start&&s[key]?.end?' – ':''}${fmt(s[key]?.end||'')}`:'Allowed'}`).join('<br>');
+  }
+
+  const oldRender=window.renderVendors;
+  if(typeof oldRender==='function'){
+    window.renderVendors=function(){
+      oldRender();
+      document.querySelectorAll('#vgrid .card[data-vid]').forEach(card=>{
+        const v=typeof vendorById==='function'?vendorById(Number(card.dataset.vid)):null;
+        if(!v)return;
+        let box=card.querySelector('.vendor-delivery-summary');
+        const html=deliverySummaryFromObject(v.delivery_schedule);
+        if(!html){box?.remove();return;}
+        if(!box){box=document.createElement('div');box.className='vendor-delivery-summary muted';box.style.cssText='margin-top:8px;font-size:12px;line-height:1.45';card.appendChild(box);}
+        box.innerHTML='<b>Delivery:</b><br>'+html;
+      });
+    };
   }
 
   document.addEventListener('click',e=>{if(e.target.closest('#addVendor'))setTimeout(()=>{ensureScheduleUI();hideLegacyField();clearSchedule()},100);if(e.target.closest('.vendor-link'))setTimeout(fillSchedule,120);});
-  document.addEventListener('submit',e=>{if(e.target?.id==='vendorForm')setTimeout(saveSchedule,450)},true);
   setTimeout(()=>{ensureScheduleUI();hideLegacyField()},700);setTimeout(()=>{ensureScheduleUI();hideLegacyField()},1600);
 })();
