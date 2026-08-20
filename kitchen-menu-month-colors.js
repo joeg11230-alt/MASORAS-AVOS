@@ -1,0 +1,5 @@
+(()=>{
+ const colors=['#2563eb','#059669','#7c3aed','#ea580c','#0891b2','#be123c','#4f46e5','#15803d','#c2410c','#9333ea','#0369a1','#b45309','#0f766e'];
+ function apply(){document.querySelectorAll('#kitchenPlaceholder .menu-month').forEach((m,i)=>{const c=colors[i%colors.length];m.style.borderColor=c;const head=m.querySelector('.menu-month-head');if(head){head.style.background=c;head.style.color='#fff';}const dates=m.querySelectorAll('.menu-date');dates.forEach(d=>d.style.color=c);const notes=m.querySelector('.menu-notes');if(notes)notes.style.borderTopColor=c;});}
+ new MutationObserver(apply).observe(document.documentElement,{childList:true,subtree:true});if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply);else apply();setTimeout(apply,500);setTimeout(apply,1500);
+})();
