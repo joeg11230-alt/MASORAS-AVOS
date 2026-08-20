@@ -33,32 +33,47 @@
             <div><h2 style="margin:0">Maintenance</h2><div class="muted">Maintenance operations</div></div>
           </div>
           <div id="maintenanceSubTabs" class="row" style="margin-top:14px;border-bottom:1px solid #d9dee7;padding-bottom:10px">
-            <button type="button" class="primary" data-maintenance-page="inventory">Inventory</button>
+            <button type="button" data-maintenance-page="inventory">Inventory</button>
+            <button type="button" data-maintenance-page="needs">Needs Ordering</button>
+            <button type="button" data-maintenance-page="queues">Order Queue</button>
           </div>
           <div id="maintenanceLanding" style="padding:18px 0 4px">
             <h3 style="margin-top:0">Maintenance Dashboard</h3>
             <div class="grid">
               <button type="button" class="card" data-maintenance-page="inventory" style="text-align:left"><b>Inventory</b><div class="muted">Maintenance products and stock</div></button>
+              <button type="button" class="card" data-maintenance-page="needs" style="text-align:left"><b>Needs Ordering</b><div class="muted">Maintenance items that need replenishment</div></button>
+              <button type="button" class="card" data-maintenance-page="queues" style="text-align:left"><b>Order Queue</b><div class="muted">Maintenance orders waiting to be placed</div></button>
             </div>
           </div>
         </div>`;
       main.prepend(section);
     }
 
+    const setMaintenanceActive=()=>{
+      nav.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+      maintenanceBtn.classList.add('active');
+    };
+
     const openHub=()=>{
       document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
       section.classList.add('active');
-      nav.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
-      maintenanceBtn.classList.add('active');
+      setMaintenanceActive();
     };
     maintenanceBtn.onclick=openHub;
 
     section.onclick=e=>{
       const btn=e.target.closest('[data-maintenance-page]');if(!btn)return;
-      if(btn.dataset.maintenancePage==='inventory'){
+      const page=btn.dataset.maintenancePage;
+      if(page==='inventory'){
         if(typeof switchTab==='function')switchTab('maintenanceInventory');
         else inventoryBtn.click();
-        setTimeout(()=>{nav.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));maintenanceBtn.classList.add('active');},0);
+        setTimeout(setMaintenanceActive,0);
+        return;
+      }
+      if(['needs','queues'].includes(page)){
+        if(typeof switchTab==='function')switchTab(page);
+        else nav.querySelector(`.tab[data-tab="${page}"]`)?.click();
+        setTimeout(setMaintenanceActive,0);
       }
     };
   }
