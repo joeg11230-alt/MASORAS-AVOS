@@ -2,13 +2,13 @@
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Masoras Avos</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fff}#appframe{border:0;width:100%;height:100%;display:block}</style></head>
 <body>
-<iframe id="appframe" src="app.html?v=11" title="Masoras Avos"></iframe>
+<iframe id="appframe" src="app.html?v=12" title="Masoras Avos"></iframe>
 <script>
 const frame=document.getElementById('appframe');
 frame.addEventListener('load',()=>{
   try{
     const d=frame.contentDocument;d.title='Masoras Avos';
-    const scripts=['vendor-status.js?v=11','purchase-order-enhancements.js?v=13','masoras-profile.js?v=11','inventory-split.js?v=13','masoras-branding.js?v=16','kitchen-section.js?v=5','kitchen-recipes.js?v=3','maintenance-section.js?v=4','hall-section.js?v=1','organization-home.js?v=16','profile-save-fix.js?v=11','vendor-load-fix.js?v=1','phone-ext.js?v=2','queue-consistency-fix.js?v=1','dashboard-polish.js?v=1','product-barcode-scanner.js?v=1','create-order-fix.js?v=7','user-permissions.js?v=2','user-invite.js?v=3','dashboard-user-name.js?v=3','user-language.js?v=3','dashboard-greeting.js?v=3','vendor-save-fix.js?v=2','stock-check.js?v=1','vendor-delivery-schedule.js?v=6','product-status.js?v=1','inventory-alerts.js?v=3','dashboard-tab-colors.js?v=3'];
+    const scripts=['vendor-status.js?v=11','purchase-order-enhancements.js?v=13','masoras-profile.js?v=11','inventory-split.js?v=13','masoras-branding.js?v=16','kitchen-section.js?v=5','kitchen-recipes.js?v=3','maintenance-section.js?v=4','hall-section.js?v=1','transportation-section.js?v=1','organization-home.js?v=17','profile-save-fix.js?v=11','vendor-load-fix.js?v=1','phone-ext.js?v=2','queue-consistency-fix.js?v=1','dashboard-polish.js?v=1','product-barcode-scanner.js?v=1','create-order-fix.js?v=7','user-permissions.js?v=2','user-invite.js?v=3','dashboard-user-name.js?v=3','user-language.js?v=3','dashboard-greeting.js?v=3','vendor-save-fix.js?v=2','stock-check.js?v=1','vendor-delivery-schedule.js?v=6','product-status.js?v=1','inventory-alerts.js?v=3','dashboard-tab-colors.js?v=3'];
     scripts.forEach(src=>{const s=d.createElement('script');s.src=src;d.body.appendChild(s)});
   }catch(e){console.error(e)}
 });
