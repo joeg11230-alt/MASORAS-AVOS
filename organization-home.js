@@ -14,6 +14,7 @@
     const maintenanceInventory=nav.querySelector('.tab[data-tab="maintenanceInventory"]');
     const maintenanceHub=nav.querySelector('#maintenanceMainTab');
     const hallHub=nav.querySelector('#hallMainTab');
+    const transportationHub=nav.querySelector('#transportationMainTab');
     const needs=nav.querySelector('.tab[data-tab="needs"]');
     const queues=nav.querySelector('.tab[data-tab="queues"]');
     const receiving=nav.querySelector('.tab[data-tab="receiving"]');
@@ -25,12 +26,13 @@
     if(maintenanceInventory){maintenanceInventory.textContent='Inventory';maintenanceInventory.hidden=!!maintenanceHub;maintenanceInventory.style.display=maintenanceHub?'none':'';}
     if(maintenanceHub)maintenanceHub.textContent='Maintenance';
     if(hallHub)hallHub.textContent='Hall';
+    if(transportationHub)transportationHub.textContent='Transportation';
 
-    [profile,kitchenHub||inventory,maintenanceHub||maintenanceInventory,hallHub,needs,queues,receiving,vendors].filter(Boolean).forEach(btn=>nav.appendChild(btn));
+    [profile,kitchenHub||inventory,maintenanceHub||maintenanceInventory,hallHub,transportationHub,needs,queues,receiving,vendors].filter(Boolean).forEach(btn=>nav.appendChild(btn));
 
-    const wanted=new Set(['profile','inventory','maintenanceInventory','needs','queues','receiving','vendors','kitchenHub','maintenanceHub','hallHub']);
+    const wanted=new Set(['profile','inventory','maintenanceInventory','needs','queues','receiving','vendors','kitchenHub','maintenanceHub','hallHub','transportationHub']);
     nav.querySelectorAll('.tab').forEach(btn=>{
-      if(btn.id==='kitchenMainTab'||btn.id==='maintenanceMainTab'||btn.id==='hallMainTab')return;
+      if(btn.id==='kitchenMainTab'||btn.id==='maintenanceMainTab'||btn.id==='hallMainTab'||btn.id==='transportationMainTab')return;
       if(!wanted.has(btn.dataset.tab)) btn.style.display='none';
     });
   }
