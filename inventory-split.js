@@ -64,6 +64,7 @@
       const id=$('#id').value;
       const p={
         inventory_type:$('#inventoryType').value||'Kitchen',
+        is_active:document.querySelector('#itemActive')?.checked!==false,
         vendor:$('#vendor').value.trim(),item:$('#item').value.trim(),brand:$('#brand').value.trim()||null,sku:$('#sku').value.trim()||null,
         category:$('#category').value.trim()||null,storage_location:$('#storage').value.trim()||null,unit:$('#unit').value.trim()||null,
         case_pack:$('#casepack').value.trim()||null,pounds_per_case:$('#pounds').value||null,price:$('#price').value||null,
