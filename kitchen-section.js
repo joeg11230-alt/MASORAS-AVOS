@@ -7,17 +7,9 @@
     const inventoryBtn=nav?.querySelector('.tab[data-tab="inventory"]');
     if(!nav||!main||!inventoryBtn)return;
 
-    inventoryBtn.hidden=true;
-    inventoryBtn.style.display='none';
-    inventoryBtn.textContent='Inventory';
-
+    inventoryBtn.hidden=true;inventoryBtn.style.display='none';inventoryBtn.textContent='Inventory';
     let kitchenBtn=nav.querySelector('#kitchenMainTab');
-    if(!kitchenBtn){
-      kitchenBtn=document.createElement('button');
-      kitchenBtn.id='kitchenMainTab';kitchenBtn.type='button';kitchenBtn.className='tab';kitchenBtn.textContent='Kitchen';kitchenBtn.dataset.tab='kitchenHub';
-      const profile=nav.querySelector('.tab[data-tab="profile"]');
-      if(profile)profile.after(kitchenBtn);else nav.prepend(kitchenBtn);
-    }
+    if(!kitchenBtn){kitchenBtn=document.createElement('button');kitchenBtn.id='kitchenMainTab';kitchenBtn.type='button';kitchenBtn.className='tab';kitchenBtn.textContent='Kitchen';kitchenBtn.dataset.tab='kitchenHub';const profile=nav.querySelector('.tab[data-tab="profile"]');if(profile)profile.after(kitchenBtn);else nav.prepend(kitchenBtn);}
 
     let section=document.querySelector('#kitchenHub');
     if(!section){section=document.createElement('section');section.id='kitchenHub';section.className='section';main.prepend(section);}
@@ -30,9 +22,18 @@
       </div></div><div id="kitchenPlaceholder" style="display:none;padding:18px 0 4px"></div></div>`;
 
     const setKitchenActive=()=>{nav.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));kitchenBtn.classList.add('active');};
+    const showPlaceholder=()=>{section.querySelector('#kitchenLanding').style.display='none';const box=section.querySelector('#kitchenPlaceholder');box.style.display='block';return box;};
     const openHub=()=>{document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));section.classList.add('active');setKitchenActive();section.querySelector('#kitchenLanding').style.display='block';section.querySelector('#kitchenPlaceholder').style.display='none';};
     kitchenBtn.onclick=openHub;
-    section.onclick=e=>{const btn=e.target.closest('[data-kitchen-page]');if(!btn)return;const page=btn.dataset.kitchenPage;if(['inventory','needs','queues'].includes(page)){if(typeof switchTab==='function')switchTab(page);else nav.querySelector(`.tab[data-tab="${page}"]`)?.click();setTimeout(setKitchenActive,0);return;}const titles={recipes:'Recipes',menu:'Menu',prep:'Prep Amount',todo:'To Do'},desc={recipes:'Recipe management will live here.',menu:'Kitchen menu planning will live here.',prep:'Kitchen prep quantities and production amounts will live here.',todo:'Kitchen tasks and follow-ups will live here.'};section.querySelector('#kitchenLanding').style.display='none';const box=section.querySelector('#kitchenPlaceholder');box.style.display='block';box.innerHTML=`<div class="subcard"><h3 style="margin-top:0">${esc(titles[page]||page)}</h3><div class="muted">${esc(desc[page]||'')}</div></div>`;setKitchenActive();};
+    section.onclick=e=>{
+      const btn=e.target.closest('[data-kitchen-page]');if(!btn)return;
+      const page=btn.dataset.kitchenPage;
+      if(['inventory','needs','queues'].includes(page)){if(typeof switchTab==='function')switchTab(page);else nav.querySelector(`.tab[data-tab="${page}"]`)?.click();setTimeout(setKitchenActive,0);return;}
+      if(page==='recipes'){const box=showPlaceholder();box.innerHTML='<div class="muted">Loading recipes…</div>';setKitchenActive();setTimeout(()=>{if(typeof window.loadKitchenRecipes==='function')window.loadKitchenRecipes();else box.innerHTML='<div class="muted">Recipe manager is still loading. Please try again.</div>';},30);return;}
+      const titles={menu:'Menu',prep:'Prep Amount',todo:'To Do'};
+      const desc={menu:'Kitchen menu planning will live here.',prep:'Kitchen prep quantities and production amounts will live here.',todo:'Kitchen tasks and follow-ups will live here.'};
+      const box=showPlaceholder();box.innerHTML=`<div class="subcard"><h3 style="margin-top:0">${esc(titles[page]||page)}</h3><div class="muted">${esc(desc[page]||'')}</div></div>`;setKitchenActive();
+    };
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensureKitchen);else ensureKitchen();setTimeout(ensureKitchen,400);setTimeout(ensureKitchen,1200);
 })();
