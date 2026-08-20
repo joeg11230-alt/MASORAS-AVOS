@@ -1,11 +1,6 @@
 <!doctype html>
 <html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Masoras Avos</title>
-<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fff}#appframe{border:0;width:100%;height:100%;display:block}</style>
-</head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Masoras Avos</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fff}#appframe{border:0;width:100%;height:100%;display:block}</style></head>
 <body>
 <iframe id="appframe" src="app.html?v=2" title="Masoras Avos"></iframe>
 <script>
@@ -14,7 +9,7 @@ frame.addEventListener('load',()=>{
   try{
     const d=frame.contentDocument;
     d.title='Masoras Avos';
-    const scripts=['vendor-status.js?v=11','purchase-order-enhancements.js?v=11','masoras-profile.js?v=11','inventory-split.js?v=11','masoras-branding.js?v=11','organization-home.js?v=11','profile-save-fix.js?v=11','vendor-load-fix.js?v=1','phone-ext.js?v=1','queue-consistency-fix.js?v=1','dashboard-polish.js?v=1','product-barcode-scanner.js?v=1','create-order-fix.js?v=1','user-permissions.js?v=1'];
+    const scripts=['vendor-status.js?v=11','purchase-order-enhancements.js?v=11','masoras-profile.js?v=11','inventory-split.js?v=11','masoras-branding.js?v=11','organization-home.js?v=11','profile-save-fix.js?v=11','vendor-load-fix.js?v=1','phone-ext.js?v=1','queue-consistency-fix.js?v=1','dashboard-polish.js?v=1','product-barcode-scanner.js?v=1','create-order-fix.js?v=1','user-permissions.js?v=2','user-invite.js?v=1'];
     scripts.forEach(src=>{const s=d.createElement('script');s.src=src;d.body.appendChild(s)});
   }catch(e){console.error(e)}
 });
