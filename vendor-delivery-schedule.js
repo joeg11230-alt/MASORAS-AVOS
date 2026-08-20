@@ -48,16 +48,34 @@
     rows.querySelectorAll('.delivery-start,.delivery-end').forEach(i=>i.onchange=updateSummary);
   }
 
-  async function fillSchedule(){
-    ensureScheduleUI();hideLegacyField();
-    const id=Number(document.querySelector('#vid')?.value||0);if(!id)return clearSchedule();
-    const r=await db.from('vendors').select('delivery_schedule').eq('id',id).maybeSingle();if(r.error)return;
-    const schedule=r.data?.delivery_schedule||{};
-    DAYS.forEach(([key])=>{const row=schedule[key]||{},enabled=document.querySelector(`.delivery-day-enabled[data-day="${key}"]`),start=document.querySelector(`.delivery-start[data-day="${key}"]`),end=document.querySelector(`.delivery-end[data-day="${key}"]`);if(!enabled||!start||!end)return;enabled.checked=!!row.enabled;start.disabled=!enabled.checked;end.disabled=!enabled.checked;start.value=row.start||'';end.value=row.end||'';});
+  function applySchedule(schedule){
+    ensureScheduleUI();
+    schedule=schedule&&typeof schedule==='object'?schedule:{};
+    DAYS.forEach(([key])=>{
+      const row=schedule[key]||{};
+      const enabled=document.querySelector(`.delivery-day-enabled[data-day="${key}"]`);
+      const start=document.querySelector(`.delivery-start[data-day="${key}"]`);
+      const end=document.querySelector(`.delivery-end[data-day="${key}"]`);
+      if(!enabled||!start||!end)return;
+      enabled.checked=!!row.enabled;
+      start.disabled=!enabled.checked;end.disabled=!enabled.checked;
+      start.value=row.start||'';end.value=row.end||'';
+    });
     updateSummary();setCollapsed(true);
   }
 
-  function clearSchedule(){DAYS.forEach(([key])=>{const enabled=document.querySelector(`.delivery-day-enabled[data-day="${key}"]`),start=document.querySelector(`.delivery-start[data-day="${key}"]`),end=document.querySelector(`.delivery-end[data-day="${key}"]`);if(enabled)enabled.checked=false;if(start){start.value='';start.disabled=true}if(end){end.value='';end.disabled=true}});updateSummary();setCollapsed(true);}
+  async function fillScheduleForId(id){
+    ensureScheduleUI();hideLegacyField();
+    id=Number(id||document.querySelector('#vid')?.value||0);
+    if(!id){applySchedule({});return;}
+    try{
+      const r=await db.from('vendors').select('delivery_schedule').eq('id',id).maybeSingle();
+      if(r.error)throw r.error;
+      applySchedule(r.data?.delivery_schedule||{});
+    }catch(e){console.error('Could not load delivery schedule',e);}
+  }
+
+  function clearSchedule(){applySchedule({});}
 
   function deliverySummaryFromObject(schedule){
     const s=schedule&&typeof schedule==='object'?schedule:{};
@@ -93,6 +111,16 @@
     };
   }
 
+  // Always reload the saved schedule whenever a vendor is opened, regardless of which button/link opened it.
+  const originalOpenVendor=window.openVendor;
+  if(typeof originalOpenVendor==='function'){
+    window.openVendor=function(id){
+      const result=originalOpenVendor.apply(this,arguments);
+      setTimeout(()=>fillScheduleForId(id),80);
+      return result;
+    };
+  }
+
   function cleanVisibleCards(){
     document.querySelectorAll('#vgrid .card[data-vid]').forEach(card=>{
       const v=typeof vendorById==='function'?vendorById(Number(card.dataset.vid)):null;
@@ -100,6 +128,15 @@
     });
   }
 
-  document.addEventListener('click',e=>{if(e.target.closest('#addVendor'))setTimeout(()=>{ensureScheduleUI();hideLegacyField();clearSchedule()},100);if(e.target.closest('.vendor-link'))setTimeout(fillSchedule,120);if(e.target.closest('[data-tab="vendors"]'))setTimeout(cleanVisibleCards,120);});
-  setTimeout(()=>{ensureScheduleUI();hideLegacyField();cleanVisibleCards()},700);setTimeout(()=>{ensureScheduleUI();hideLegacyField();cleanVisibleCards()},1600);
+  document.addEventListener('click',e=>{
+    if(e.target.closest('#addVendor'))setTimeout(()=>{ensureScheduleUI();hideLegacyField();clearSchedule()},80);
+    if(e.target.closest('.vendor-link,.open-vendor')){
+      const card=e.target.closest('[data-vid]');
+      const id=Number(card?.dataset.vid||0);
+      if(id)setTimeout(()=>fillScheduleForId(id),100);
+    }
+    if(e.target.closest('[data-tab="vendors"]'))setTimeout(cleanVisibleCards,120);
+  });
+  setTimeout(()=>{ensureScheduleUI();hideLegacyField();cleanVisibleCards()},700);
+  setTimeout(()=>{ensureScheduleUI();hideLegacyField();cleanVisibleCards()},1600);
 })();
