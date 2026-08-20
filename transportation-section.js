@@ -1,18 +1,16 @@
 (()=>{
+  const pages={drivers:['Drivers','Manage transportation drivers.'],maintenance:['Maintenance','Track vehicle maintenance and service.'],certification:['Annual Certification','Track annual certifications and renewals.'],inspections:['Inspections','Manage transportation inspections.']};
+  const colors={drivers:['#2563eb','#eff6ff'],maintenance:['#f59e0b','#fffbeb'],certification:['#16a34a','#f0fdf4'],inspections:['#9333ea','#faf5ff']};
   function ensureTransportation(){
-    const nav=document.querySelector('nav');
-    const main=document.querySelector('main.wrap');
-    if(!nav||!main)return;
+    const nav=document.querySelector('nav'),main=document.querySelector('main.wrap');if(!nav||!main)return;
     let btn=nav.querySelector('#transportationMainTab');
-    if(!btn){
-      btn=document.createElement('button');btn.type='button';btn.id='transportationMainTab';btn.className='tab';btn.dataset.tab='transportationHub';btn.textContent='Transportation';
-      const hall=nav.querySelector('#hallMainTab');
-      if(hall)hall.after(btn);else nav.appendChild(btn);
-    }
-    let section=document.querySelector('#transportationHub');
-    if(!section){section=document.createElement('section');section.id='transportationHub';section.className='section';main.prepend(section);}
-    section.innerHTML='<div class="card"><div class="section-head" style="margin-top:0;border-top:0;padding-top:0"><div><h2 style="margin:0">Transportation</h2><div class="muted">Transportation operations</div></div></div><div style="padding:18px 0 4px"><div class="subcard"><h3 style="margin-top:0">Transportation Dashboard</h3><div class="muted">Transportation tools and sections will be organized here.</div></div></div></div>';
-    btn.onclick=()=>{document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));section.classList.add('active');nav.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');};
+    if(!btn){btn=document.createElement('button');btn.type='button';btn.id='transportationMainTab';btn.className='tab';btn.dataset.tab='transportationHub';btn.textContent='Transportation';const hall=nav.querySelector('#hallMainTab');if(hall)hall.after(btn);else nav.appendChild(btn);}
+    let section=document.querySelector('#transportationHub');if(!section){section=document.createElement('section');section.id='transportationHub';section.className='section';main.prepend(section);}
+    section.innerHTML=`<div class="card"><div class="section-head" style="margin-top:0;border-top:0;padding-top:0"><div><h2 style="margin:0">Transportation</h2><div class="muted">Transportation operations</div></div></div><div id="transportationSubTabs" class="row" style="margin-top:14px;border-bottom:1px solid #d9dee7;padding-bottom:10px"><button type="button" data-transport-page="drivers">Drivers</button><button type="button" data-transport-page="maintenance">Maintenance</button><button type="button" data-transport-page="certification">Annual Certification</button><button type="button" data-transport-page="inspections">Inspections</button></div><div id="transportationLanding" style="padding:18px 0 4px"><h3 style="margin-top:0">Transportation Dashboard</h3><div class="grid">${Object.entries(pages).map(([k,v])=>`<button type="button" class="card" data-transport-page="${k}" style="text-align:left"><b>${v[0]}</b><div class="muted">${v[1]}</div></button>`).join('')}</div></div><div id="transportationPlaceholder" style="display:none;padding:18px 0 4px"></div></div>`;
+    section.querySelectorAll('[data-transport-page]').forEach(el=>{const [c,bg]=colors[el.dataset.transportPage];el.style.borderColor=c;el.style.background=bg;el.style.color='#172033';});
+    const activate=()=>{nav.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');};
+    btn.onclick=()=>{document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));section.classList.add('active');activate();section.querySelector('#transportationLanding').style.display='block';section.querySelector('#transportationPlaceholder').style.display='none';};
+    section.onclick=e=>{const p=e.target.closest('[data-transport-page]')?.dataset.transportPage;if(!p)return;section.querySelector('#transportationLanding').style.display='none';const box=section.querySelector('#transportationPlaceholder');box.style.display='block';box.innerHTML=`<div class="subcard"><h3 style="margin-top:0">${pages[p][0]}</h3><div class="muted">${pages[p][1]}</div></div>`;section.querySelectorAll('#transportationSubTabs [data-transport-page]').forEach(x=>{x.style.boxShadow=x.dataset.transportPage===p?`0 0 0 3px ${colors[p][0]}33`:'none';x.style.fontWeight=x.dataset.transportPage===p?'800':'600';});activate();};
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensureTransportation);else ensureTransportation();setTimeout(ensureTransportation,400);setTimeout(ensureTransportation,1200);
 })();
