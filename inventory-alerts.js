@@ -1,5 +1,6 @@
 (()=>{
   const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+  let emailCheckBusy=false;
 
   function classify(item){
     if(item?.is_active===false)return null;
@@ -63,8 +64,62 @@
     });
   }
 
-  async function refresh(){await renderAlerts();decorateCards()}
-  document.addEventListener('click',e=>{if(e.target.closest('[data-tab="profile"],#saveProfile,#add,#profileEdit'))setTimeout(refresh,200)},true);
-  const grid=document.querySelector('#grid');if(grid)new MutationObserver(()=>decorateCards()).observe(grid,{childList:true});
-  setTimeout(refresh,800);setTimeout(refresh,1800);
+  async function processEmailAlerts(){
+    if(emailCheckBusy)return;
+    emailCheckBusy=true;
+    try{
+      const {data:{session}}=await db.auth.getSession();
+      if(!session?.user)return;
+
+      for(const item of getItems()){
+        if(!item?.id)continue;
+        const status=classify(item);
+        const desired=status?.level||null;
+        const current=item.email_alert_level||null;
+
+        if(!desired){
+          if(current){
+            const r=await db.from('inventory_items').update({email_alert_level:null,email_alert_sent_at:null}).eq('id',item.id);
+            if(!r.error){item.email_alert_level=null;item.email_alert_sent_at=null;}
+          }
+          continue;
+        }
+
+        if(current===desired)continue;
+
+        const claim=await db.from('inventory_items')
+          .update({email_alert_level:desired,email_alert_sent_at:new Date().toISOString()})
+          .eq('id',item.id)
+          .or(current===null?'email_alert_level.is.null':`email_alert_level.eq.${current}`)
+          .select('id')
+          .maybeSingle();
+
+        if(claim.error||!claim.data?.id)continue;
+
+        try{
+          const send=await db.functions.invoke('inventory-alert-email',{
+            body:{
+              item:item.item||'Inventory Item',
+              qty:Number(item.qty_on_hand||0),
+              status:status.label,
+              inventory:(item.inventory_type||'Kitchen')+' Inventory'
+            }
+          });
+          if(send.error)throw send.error;
+          item.email_alert_level=desired;
+          item.email_alert_sent_at=new Date().toISOString();
+        }catch(err){
+          console.error('Inventory alert email failed',err);
+          await db.from('inventory_items').update({email_alert_level:current,email_alert_sent_at:item.email_alert_sent_at||null}).eq('id',item.id).eq('email_alert_level',desired);
+        }
+      }
+    }finally{emailCheckBusy=false;}
+  }
+
+  async function refresh(){await renderAlerts();decorateCards();await processEmailAlerts()}
+  document.addEventListener('click',e=>{if(e.target.closest('[data-tab="profile"],#saveProfile,#add,#profileEdit'))setTimeout(refresh,250)},true);
+  const grid=document.querySelector('#grid');if(grid)new MutationObserver(()=>{decorateCards();setTimeout(processEmailAlerts,150)}).observe(grid,{childList:true});
+  db.channel('inventory-email-alerts').on('postgres_changes',{event:'UPDATE',schema:'public',table:'inventory_items'},()=>setTimeout(processEmailAlerts,350)).subscribe();
+  setInterval(processEmailAlerts,30000);
+  setTimeout(refresh,900);setTimeout(refresh,2000);
 })();
