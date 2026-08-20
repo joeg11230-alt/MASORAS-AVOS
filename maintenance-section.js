@@ -5,6 +5,7 @@
     const inventoryBtn=nav?.querySelector('.tab[data-tab="maintenanceInventory"]');
     if(!nav||!main||!inventoryBtn)return;
 
+    inventoryBtn.hidden=true;
     inventoryBtn.style.display='none';
     inventoryBtn.textContent='Inventory';
 
@@ -14,7 +15,7 @@
       maintenanceBtn.id='maintenanceMainTab';
       maintenanceBtn.type='button';
       maintenanceBtn.className='tab';
-      maintenanceBtn.textContent='MAINTENANCE';
+      maintenanceBtn.textContent='Maintenance';
       maintenanceBtn.dataset.tab='maintenanceHub';
       const kitchen=nav.querySelector('#kitchenMainTab');
       const profile=nav.querySelector('.tab[data-tab="profile"]');
@@ -29,7 +30,7 @@
       section.innerHTML=`
         <div class="card">
           <div class="section-head" style="margin-top:0;border-top:0;padding-top:0">
-            <div><h2 style="margin:0">MAINTENANCE</h2><div class="muted">Maintenance operations</div></div>
+            <div><h2 style="margin:0">Maintenance</h2><div class="muted">Maintenance operations</div></div>
           </div>
           <div id="maintenanceSubTabs" class="row" style="margin-top:14px;border-bottom:1px solid #d9dee7;padding-bottom:10px">
             <button type="button" class="primary" data-maintenance-page="inventory">Inventory</button>
