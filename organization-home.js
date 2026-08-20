@@ -16,10 +16,29 @@
     if(kitchen) kitchen.textContent='Kitchen Inventory';
     if(maintenance) maintenance.textContent='Maintenance Inventory';
 
-    [profile,kitchen,maintenance,needs,queues,receiving,vendors].filter(Boolean).forEach(btn=>nav.appendChild(btn));
+    let folder=nav.querySelector('#kitchenFolder');
+    if(kitchen){
+      if(!folder){
+        folder=document.createElement('div');
+        folder.id='kitchenFolder';
+        folder.style.cssText='display:flex;flex-direction:column;gap:4px;width:100%;';
+        const head=document.createElement('button');
+        head.type='button';head.id='kitchenFolderHead';head.className='tab';
+        head.innerHTML='<span style="margin-right:7px">📁</span><b>KITCHEN</b><span id="kitchenFolderArrow" style="margin-left:auto">▾</span>';
+        const sub=document.createElement('div');sub.id='kitchenFolderSub';sub.style.cssText='display:block;padding-left:18px;';
+        kitchen.parentNode.insertBefore(folder,kitchen);folder.append(head,sub);sub.appendChild(kitchen);
+        kitchen.style.width='100%';
+        head.onclick=()=>{const open=sub.style.display!=='none';sub.style.display=open?'none':'block';head.querySelector('#kitchenFolderArrow').textContent=open?'▸':'▾';};
+      }else{
+        const sub=folder.querySelector('#kitchenFolderSub');if(sub&&!sub.contains(kitchen))sub.appendChild(kitchen);
+      }
+    }
+
+    [profile,folder,maintenance,needs,queues,receiving,vendors].filter(Boolean).forEach(el=>nav.appendChild(el));
 
     const wanted=new Set(['profile','inventory','maintenanceInventory','needs','queues','receiving','vendors']);
     nav.querySelectorAll('.tab').forEach(btn=>{
+      if(btn.id==='kitchenFolderHead')return;
       if(!wanted.has(btn.dataset.tab)) btn.style.display='none';
     });
   }
