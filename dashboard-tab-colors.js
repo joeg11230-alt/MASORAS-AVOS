@@ -1,6 +1,6 @@
 (()=>{
-  const mainPalette=['#1f4e78','#7b2cbf','#0f766e','#b45309','#be123c','#0369a1','#4d7c0f'];
-  const kitchenPalette=['#2563eb','#059669','#d97706','#7c3aed','#db2777','#0891b2'];
+  const mainPalette=['#1f4e78','#7b2cbf','#0f766e','#b45309','#be123c','#0369a1','#4d7c0f','#0891b2','#8b5cf6'];
+  const kitchenPalette=['#2563eb','#059669','#d97706','#7c3aed','#db2777','#0891b2','#16a34a'];
   const maintenancePalette=['#374151','#b45309','#0f766e','#7c3aed'];
 
   function paint(buttons,palette){
@@ -30,8 +30,12 @@
   function apply(){
     const nav=document.querySelector('nav');
     if(nav){
-      const tabs=[...nav.querySelectorAll(':scope > .tab')].filter(b=>getComputedStyle(b).display!=='none').slice(0,7);
+      const tabs=[...nav.querySelectorAll(':scope > .tab')].filter(b=>getComputedStyle(b).display!=='none');
       paint(tabs,mainPalette);
+      const receiving=nav.querySelector('.tab[data-tab="receiving"]');
+      const vendors=nav.querySelector('.tab[data-tab="vendors"]');
+      if(receiving){receiving.style.setProperty('background','#0891b2','important');receiving.style.setProperty('border-color','#0891b2','important');receiving.style.setProperty('color','#fff','important');}
+      if(vendors){vendors.style.setProperty('background','#8b5cf6','important');vendors.style.setProperty('border-color','#8b5cf6','important');vendors.style.setProperty('color','#fff','important');}
     }
     paint([...document.querySelectorAll('#kitchenSubTabs > button')],kitchenPalette);
     paint([...document.querySelectorAll('#maintenanceSubTabs > button')],maintenancePalette);
