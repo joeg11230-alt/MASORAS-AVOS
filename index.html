@@ -1,15 +1,16 @@
 <!doctype html>
 <html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Masoras Avos</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fff}#appframe{border:0;width:100%;height:100%;display:block}</style></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"><title>Masoras Avos</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fff}#appframe{border:0;width:100%;height:100%;display:block}</style></head>
 <body>
-<iframe id="appframe" src="app.html?v=40" title="Masoras Avos"></iframe>
+<iframe id="appframe" src="app.html?build=20260821-hardrefresh-1" title="Masoras Avos"></iframe>
 <script>
+const BUILD='20260821-hardrefresh-1';
 const frame=document.getElementById('appframe');
 frame.addEventListener('load',()=>{
   try{
     const d=frame.contentDocument;d.title='Masoras Avos';
-    const scripts=['db-bridge.js?v=1','vendor-status.js?v=11','purchase-order-enhancements.js?v=13','masoras-profile.js?v=11','powered-branding.js?v=1','copyright-branding.js?v=1','global-refresh.js?v=1','inventory-split.js?v=13','masoras-branding.js?v=16','kitchen-section.js?v=8','kitchen-menu-calendar.js?v=5','kitchen-menu-month-colors.js?v=1','kitchen-menu-print-footer.js?v=1','kitchen-prep-amount.js?v=3','kitchen-recipes.js?v=5','kitchen-todo.js?v=1','maintenance-section.js?v=5','maintenance-todo.js?v=1','hall-section.js?v=1','transportation-section.js?v=3','transportation-buses.js?v=1','transportation-bus-profile-enhancements.js?v=1','transportation-bus-maintenance-documents.js?v=1','transportation-drivers.js?v=3','transportation-driver-expiration-fields.js?v=1','transportation-driver-save-fix.js?v=2','transportation-driver-documents.js?v=1','organization-home.js?v=17','profile-save-fix.js?v=11','vendor-load-fix.js?v=1','vendor-order-tab.js?v=1','phone-ext.js?v=2','queue-consistency-fix.js?v=1','dashboard-polish.js?v=1','product-barcode-scanner.js?v=1','create-order-fix.js?v=7','unit-dropdowns.js?v=1','user-permissions.js?v=2','user-invite.js?v=3','dashboard-user-name.js?v=3','user-language.js?v=3','dashboard-greeting.js?v=3','vendor-save-fix.js?v=2','stock-check.js?v=1','vendor-delivery-schedule.js?v=6','product-status.js?v=1','inventory-alerts.js?v=3','dashboard-tab-colors.js?v=3'];
-    scripts.forEach(src=>{const s=d.createElement('script');s.src=src;d.body.appendChild(s)});
+    const scripts=['db-bridge.js','vendor-status.js','purchase-order-enhancements.js','masoras-profile.js','powered-branding.js','copyright-branding.js','global-refresh.js','inventory-split.js','masoras-branding.js','kitchen-section.js','kitchen-menu-calendar.js','kitchen-menu-month-colors.js','kitchen-menu-print-footer.js','kitchen-prep-amount.js','kitchen-recipes.js','kitchen-todo.js','maintenance-section.js','maintenance-todo.js','hall-section.js','transportation-section.js','transportation-buses.js','transportation-bus-profile-enhancements.js','transportation-bus-maintenance-documents.js','transportation-drivers.js','transportation-driver-expiration-fields.js','transportation-driver-save-fix.js','transportation-driver-documents.js','organization-home.js','profile-save-fix.js','vendor-load-fix.js','vendor-order-tab.js','phone-ext.js','queue-consistency-fix.js','dashboard-polish.js','product-barcode-scanner.js','create-order-fix.js','unit-dropdowns.js','user-permissions.js','user-invite.js','dashboard-user-name.js','user-language.js','dashboard-greeting.js','vendor-save-fix.js','stock-check.js','vendor-delivery-schedule.js','product-status.js','inventory-alerts.js','dashboard-tab-colors.js'];
+    scripts.forEach(file=>{const s=d.createElement('script');s.src=file+'?build='+encodeURIComponent(BUILD);s.async=false;d.body.appendChild(s)});
   }catch(e){console.error(e)}
 });
 </script>
