@@ -21,6 +21,8 @@ create table public.building_access_door_changes (
 
 create index building_access_door_changes_status_ends_idx
   on public.building_access_door_changes (status, ends_at);
+create index building_access_door_changes_created_by_idx
+  on public.building_access_door_changes (created_by);
 
 alter table public.building_access_door_changes enable row level security;
 
