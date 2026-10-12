@@ -11,6 +11,7 @@
     const profile=nav.querySelector('.tab[data-tab="profile"]');
     inventory=nav.querySelector('.tab[data-tab="inventory"]');
     const kitchenHub=nav.querySelector('#kitchenMainTab');
+    const buildingAccessHub=nav.querySelector('#buildingAccessMainTab');
     const maintenanceInventory=nav.querySelector('.tab[data-tab="maintenanceInventory"]');
     const maintenanceHub=nav.querySelector('#maintenanceMainTab');
     const hallHub=nav.querySelector('#hallMainTab');
@@ -23,16 +24,17 @@
     if(profile) profile.textContent='Organization Profile';
     if(inventory){inventory.textContent='Inventory';inventory.hidden=!!kitchenHub;inventory.style.display=kitchenHub?'none':'';}
     if(kitchenHub)kitchenHub.textContent='Kitchen';
+    if(buildingAccessHub)buildingAccessHub.textContent='Building Access';
     if(maintenanceInventory){maintenanceInventory.textContent='Inventory';maintenanceInventory.hidden=!!maintenanceHub;maintenanceInventory.style.display=maintenanceHub?'none':'';}
     if(maintenanceHub)maintenanceHub.textContent='Maintenance';
     if(hallHub)hallHub.textContent='Hall';
     if(transportationHub)transportationHub.textContent='Transportation';
 
-    [profile,kitchenHub||inventory,maintenanceHub||maintenanceInventory,hallHub,transportationHub,needs,queues,receiving,vendors].filter(Boolean).forEach(btn=>nav.appendChild(btn));
+    [profile,kitchenHub||inventory,buildingAccessHub,maintenanceHub||maintenanceInventory,hallHub,transportationHub,needs,queues,receiving,vendors].filter(Boolean).forEach(btn=>nav.appendChild(btn));
 
-    const wanted=new Set(['profile','inventory','maintenanceInventory','needs','queues','receiving','vendors','kitchenHub','maintenanceHub','hallHub','transportationHub']);
+    const wanted=new Set(['profile','inventory','maintenanceInventory','needs','queues','receiving','vendors','kitchenHub','maintenanceHub','hallHub','transportationHub','buildingAccessHub']);
     nav.querySelectorAll('.tab').forEach(btn=>{
-      if(btn.id==='kitchenMainTab'||btn.id==='maintenanceMainTab'||btn.id==='hallMainTab'||btn.id==='transportationMainTab')return;
+      if(btn.id==='kitchenMainTab'||btn.id==='buildingAccessMainTab'||btn.id==='maintenanceMainTab'||btn.id==='hallMainTab'||btn.id==='transportationMainTab')return;
       if(!wanted.has(btn.dataset.tab)) btn.style.display='none';
     });
   }
