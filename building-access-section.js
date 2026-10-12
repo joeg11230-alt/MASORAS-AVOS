@@ -28,9 +28,10 @@
       btn.className='tab';
       btn.dataset.tab='buildingAccessHub';
       btn.textContent='Building Access';
-      const transportation=nav.querySelector('#transportationMainTab');
-      if(transportation)transportation.after(btn);else nav.appendChild(btn);
     }
+    const kitchen=nav.querySelector('#kitchenMainTab');
+    if(kitchen&&kitchen.nextElementSibling!==btn)kitchen.after(btn);
+    else if(!kitchen&&!btn.parentElement)nav.appendChild(btn);
 
     let section=document.querySelector('#buildingAccessHub');
     if(!section){
