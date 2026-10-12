@@ -2,8 +2,8 @@
   const SECTIONS=[
     ['organization_profile','Organization Profile','profile'],
     ['kitchen','Kitchen Inventory','inventory'],
-    ['maintenance','Maintenance Inventory','maintenanceInventory'],
     ['building_access','Building Access','buildingAccessHub'],
+    ['maintenance','Maintenance Inventory','maintenanceInventory'],
     ['needs_ordering','Needs Ordering','needs'],
     ['order_queues','Order Queues','queues'],
     ['receiving','Receiving','receiving'],
