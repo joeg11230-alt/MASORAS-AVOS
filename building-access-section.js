@@ -48,10 +48,12 @@
             <h2 style="margin:0">Building Access</h2>
             <div class="muted">24/7/365 access control throughout the entire building</div>
           </div>
-          <button type="button" class="primary protector-open">
-            <i class="bi bi-box-arrow-up-right"></i> Open PROTECTOR.Net
-          </button>
+          <div class="building-access-header-actions">
+            <button type="button" id="doorScheduleChangesBtn" class="primary"><i class="bi bi-calendar2-check"></i> Door Schedule Changes</button>
+            <button type="button" class="protector-open"><i class="bi bi-box-arrow-up-right"></i> Open PROTECTOR.Net</button>
+          </div>
         </div>
+        <div id="buildingAccessLanding">
         <div class="building-access-status">
           <i class="bi bi-shield-check"></i>
           <div><b>Building Access Control</b><div class="muted">Use this dashboard to reach the appropriate PROTECTOR.Net area. Your PROTECTOR.Net sign-in remains separate and secure.</div></div>
@@ -69,6 +71,8 @@
           <i class="bi bi-lock-fill"></i>
           No PROTECTOR.Net password or access credential is stored in MASORAS AVOS.
         </div>
+        </div>
+        <div id="buildingAccessTrackerMount" style="display:none"></div>
       </div>`;
 
     let style=document.querySelector('#buildingAccessStyles');
@@ -77,6 +81,7 @@
       style.id='buildingAccessStyles';
       style.textContent=`
         #buildingAccessMainTab{background:#334155!important;border-color:#334155!important;color:#fff!important;font-weight:800}
+        .building-access-header-actions{display:flex;gap:8px;flex-wrap:wrap}
         .building-access-card{border-top:5px solid #334155}
         .building-access-status{display:flex;gap:12px;align-items:center;margin-top:16px;padding:14px;border:1px solid #cbd5e1;border-radius:12px;background:linear-gradient(135deg,#eef2ff,#f8fafc)}
         .building-access-status>i{font-size:30px;color:#166534}
@@ -94,6 +99,8 @@
     }
 
     section.querySelectorAll('.protector-open,.building-access-tool').forEach(el=>el.onclick=openProtector);
+    section.querySelector('#doorScheduleChangesBtn')?.addEventListener('click',()=>window.loadDoorScheduleChanges?.());
+    window.showBuildingAccessOverview=()=>{const landing=section.querySelector('#buildingAccessLanding'),mount=section.querySelector('#buildingAccessTrackerMount');if(landing)landing.style.display='block';if(mount)mount.style.display='none';};
     btn.onclick=()=>{
       document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
       section.classList.add('active');
