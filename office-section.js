@@ -41,11 +41,11 @@
       btn.dataset.tab='officeHub';
       btn.textContent='Office';
     }
-    const buildingAccess=nav.querySelector('#buildingAccessMainTab');
-    const maintenance=nav.querySelector('#maintenanceMainTab');
-    if(buildingAccess&&buildingAccess.nextElementSibling!==btn)buildingAccess.after(btn);
-    else if(!buildingAccess&&maintenance&&maintenance.previousElementSibling!==btn)maintenance.before(btn);
-    else if(!btn.parentElement)nav.appendChild(btn);
+    const profile=nav.querySelector('.tab[data-tab="profile"]');
+    const kitchen=nav.querySelector('#kitchenMainTab');
+    if(profile&&profile.nextElementSibling!==btn)profile.after(btn);
+    else if(!profile&&kitchen&&kitchen.previousElementSibling!==btn)kitchen.before(btn);
+    else if(!btn.parentElement)nav.prepend(btn);
 
     let section=document.querySelector('#officeHub');
     if(!section){
