@@ -9,6 +9,7 @@
     if(folder&&inventory){nav.insertBefore(inventory,folder);folder.remove();inventory.style.width='';}
 
     const profile=nav.querySelector('.tab[data-tab="profile"]');
+    const officeHub=nav.querySelector('#officeMainTab');
     inventory=nav.querySelector('.tab[data-tab="inventory"]');
     const kitchenHub=nav.querySelector('#kitchenMainTab');
     const buildingAccessHub=nav.querySelector('#buildingAccessMainTab');
@@ -22,6 +23,7 @@
     const vendors=nav.querySelector('.tab[data-tab="vendors"]');
 
     if(profile) profile.textContent='Organization Profile';
+    if(officeHub)officeHub.textContent='Office';
     if(inventory){inventory.textContent='Inventory';inventory.hidden=!!kitchenHub;inventory.style.display=kitchenHub?'none':'';}
     if(kitchenHub)kitchenHub.textContent='Kitchen';
     if(buildingAccessHub)buildingAccessHub.textContent='Building Access';
@@ -30,11 +32,11 @@
     if(hallHub)hallHub.textContent='Hall';
     if(transportationHub)transportationHub.textContent='Transportation';
 
-    [profile,kitchenHub||inventory,buildingAccessHub,maintenanceHub||maintenanceInventory,hallHub,transportationHub,needs,queues,receiving,vendors].filter(Boolean).forEach(btn=>nav.appendChild(btn));
+    [profile,officeHub,kitchenHub||inventory,buildingAccessHub,maintenanceHub||maintenanceInventory,hallHub,transportationHub,needs,queues,receiving,vendors].filter(Boolean).forEach(btn=>nav.appendChild(btn));
 
-    const wanted=new Set(['profile','inventory','maintenanceInventory','needs','queues','receiving','vendors','kitchenHub','maintenanceHub','hallHub','transportationHub','buildingAccessHub']);
+    const wanted=new Set(['profile','inventory','maintenanceInventory','needs','queues','receiving','vendors','kitchenHub','maintenanceHub','hallHub','transportationHub','buildingAccessHub','officeHub']);
     nav.querySelectorAll('.tab').forEach(btn=>{
-      if(btn.id==='kitchenMainTab'||btn.id==='buildingAccessMainTab'||btn.id==='maintenanceMainTab'||btn.id==='hallMainTab'||btn.id==='transportationMainTab')return;
+      if(btn.id==='kitchenMainTab'||btn.id==='buildingAccessMainTab'||btn.id==='officeMainTab'||btn.id==='maintenanceMainTab'||btn.id==='hallMainTab'||btn.id==='transportationMainTab')return;
       if(!wanted.has(btn.dataset.tab)) btn.style.display='none';
     });
   }
