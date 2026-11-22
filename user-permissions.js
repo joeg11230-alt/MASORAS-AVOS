@@ -3,6 +3,7 @@
     ['organization_profile','Organization Profile','profile'],
     ['kitchen','Kitchen Inventory','inventory'],
     ['building_access','Building Access','buildingAccessHub'],
+    ['office','Office','officeHub'],
     ['maintenance','Maintenance Inventory','maintenanceInventory'],
     ['needs_ordering','Needs Ordering','needs'],
     ['order_queues','Order Queues','queues'],
