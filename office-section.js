@@ -4,7 +4,7 @@
     {make:'Canon',type:'B&W',location:'1st Floor Teacher Room',serial:'27Y02380',model:'IRADVDX8986I',ip:'192.168.2.201'},
     {make:'Canon',type:'B&W',location:'2nd Floor Teacher Room',serial:'27Y08230',model:'IRADVDX8986I',ip:'192.168.2.205'},
     {make:'Canon',type:'Color',location:'Main Office',serial:'4LY16735',model:'IRADVDXC3930I',ip:'192.168.2.209'},
-    {make:'Kyocera',type:'Copier',location:'Location not added',serial:'RRP0900069',model:'9003i',ip:''}
+    {make:'Kyocera',type:'Copier',location:'Main Office',serial:'RRP0900069',model:'9003i',ip:''}
   ];
   const BOGEN_URL='https://192.168.6.230/dashboard';
 
