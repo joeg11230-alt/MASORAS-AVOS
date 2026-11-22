@@ -1,9 +1,10 @@
 (()=>{
   const COPIERS=[
-    {type:'B&W',location:'Main Office',serial:'27Y02466',model:'IRADVDX8986I',ip:'192.168.2.23'},
-    {type:'B&W',location:'1st Floor Teacher Room',serial:'27Y02380',model:'IRADVDX8986I',ip:'192.168.2.201'},
-    {type:'B&W',location:'2nd Floor Teacher Room',serial:'27Y08230',model:'IRADVDX8986I',ip:'192.168.2.205'},
-    {type:'Color',location:'Main Office',serial:'4LY16735',model:'IRADVDXC3930I',ip:'192.168.2.209'}
+    {make:'Canon',type:'B&W',location:'Main Office',serial:'27Y02466',model:'IRADVDX8986I',ip:'192.168.2.23'},
+    {make:'Canon',type:'B&W',location:'1st Floor Teacher Room',serial:'27Y02380',model:'IRADVDX8986I',ip:'192.168.2.201'},
+    {make:'Canon',type:'B&W',location:'2nd Floor Teacher Room',serial:'27Y08230',model:'IRADVDX8986I',ip:'192.168.2.205'},
+    {make:'Canon',type:'Color',location:'Main Office',serial:'4LY16735',model:'IRADVDXC3930I',ip:'192.168.2.209'},
+    {make:'Kyocera',type:'Copier',location:'Location not added',serial:'RRP0900069',model:'9003i',ip:''}
   ];
   const BOGEN_URL='https://192.168.6.230/dashboard';
 
@@ -15,15 +16,15 @@
     const isColor=copier.type==='Color';
     return `<article class="office-copier-card ${isColor?'office-copier-color':'office-copier-bw'}">
       <div class="office-copier-card-head">
-        <div><span class="office-device-badge">${copier.type}</span><h3>${copier.location}</h3></div>
+        <div><span class="office-device-badge">${copier.make} · ${copier.type}</span><h3>${copier.location}</h3></div>
         <i class="bi ${isColor?'bi-palette':'bi-printer'}"></i>
       </div>
       <dl class="office-device-details">
         <div><dt>Model</dt><dd>${copier.model}</dd></div>
         <div><dt>Serial Number</dt><dd>${copier.serial}</dd></div>
-        <div><dt>IP Address</dt><dd>${copier.ip}</dd></div>
+        <div><dt>IP Address</dt><dd>${copier.ip||'Not added'}</dd></div>
       </dl>
-      <button type="button" class="office-open-device" data-office-url="https://${copier.ip}"><i class="bi bi-box-arrow-up-right"></i> Open Copier Dashboard</button>
+      ${copier.ip?`<button type="button" class="office-open-device" data-office-url="https://${copier.ip}"><i class="bi bi-box-arrow-up-right"></i> Open Copier Dashboard</button>`:'<div class="office-device-missing"><i class="bi bi-info-circle"></i> Add an IP address to enable the dashboard button.</div>'}
     </article>`;
   }
 
@@ -65,7 +66,7 @@
           <button type="button" data-office-page="bogen"><i class="bi bi-broadcast-pin"></i> Bogen</button>
         </div>
         <div id="officeCopiers" class="office-page active">
-          <div class="office-page-head"><div><h3>Canon Copiers</h3><div class="muted">Copier locations, models, serial numbers and network addresses</div></div><span class="office-count">${COPIERS.length} copiers</span></div>
+          <div class="office-page-head"><div><h3>Office Copiers</h3><div class="muted">Copier locations, models, serial numbers and network addresses</div></div><span class="office-count">${COPIERS.length} copiers</span></div>
           <div class="office-copier-grid">${COPIERS.map(copierCard).join('')}</div>
           <div class="office-network-note"><i class="bi bi-wifi"></i> Copier dashboards are available while connected to the Masoras Avos building network.</div>
         </div>
@@ -108,6 +109,7 @@
         .office-device-details dt{color:#687386;font-size:12px;font-weight:700}
         .office-device-details dd{margin:0;text-align:right;font-size:13px;font-weight:800;overflow-wrap:anywhere}
         .office-open-device,.office-open-bogen{background:#1f4e78;color:#fff;border-color:#1f4e78;font-weight:800;width:100%}
+        .office-device-missing{padding:9px 10px;border-radius:9px;background:#f1f5f9;color:#52697f;font-size:12px;font-weight:800;text-align:center}
         .office-network-note{display:flex;gap:8px;align-items:flex-start;margin-top:14px;padding:10px 12px;border-radius:10px;background:#f1f5f9;color:#475569;font-size:12px;font-weight:700}
         .office-bogen-panel{display:grid;grid-template-columns:92px 1fr;gap:18px;padding:20px;border:2px solid #0f766e;border-radius:14px;background:linear-gradient(135deg,#ecfdf5,#fff);max-width:760px}
         .office-bogen-icon{width:82px;height:82px;border-radius:18px;background:#0f766e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:38px}
