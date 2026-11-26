@@ -69,6 +69,11 @@
       document.head.appendChild(style);
     }
 
+    if(!window.__dwSpectrumNavObserver){
+      window.__dwSpectrumNavObserver=new MutationObserver(()=>setTimeout(ensureDWSpectrum,0));
+      window.__dwSpectrumNavObserver.observe(nav,{childList:true});
+    }
+
     btn.onclick=()=>{
       document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
       section.classList.add('active');
@@ -80,4 +85,5 @@
   else ensureDWSpectrum();
   setTimeout(ensureDWSpectrum,400);
   setTimeout(ensureDWSpectrum,1200);
+  setTimeout(ensureDWSpectrum,2500);
 })();
