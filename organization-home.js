@@ -13,6 +13,8 @@
     inventory=nav.querySelector('.tab[data-tab="inventory"]');
     const kitchenHub=nav.querySelector('#kitchenMainTab');
     const buildingAccessHub=nav.querySelector('#buildingAccessMainTab');
+    const hvacHub=nav.querySelector('#hvacMainTab');
+    const dwSpectrumHub=nav.querySelector('#dwSpectrumMainTab');
     const maintenanceInventory=nav.querySelector('.tab[data-tab="maintenanceInventory"]');
     const maintenanceHub=nav.querySelector('#maintenanceMainTab');
     const hallHub=nav.querySelector('#hallMainTab');
@@ -32,9 +34,9 @@
     if(hallHub)hallHub.textContent='Hall';
     if(transportationHub)transportationHub.textContent='Transportation';
 
-    [profile,officeHub,kitchenHub||inventory,buildingAccessHub,maintenanceHub||maintenanceInventory,hallHub,transportationHub,needs,queues,receiving,vendors].filter(Boolean).forEach(btn=>nav.appendChild(btn));
+    [profile,officeHub,kitchenHub||inventory,buildingAccessHub,hvacHub,dwSpectrumHub,maintenanceHub||maintenanceInventory,hallHub,transportationHub,needs,queues,receiving,vendors].filter(Boolean).forEach(btn=>nav.appendChild(btn));
 
-    const wanted=new Set(['profile','inventory','maintenanceInventory','needs','queues','receiving','vendors','kitchenHub','maintenanceHub','hallHub','transportationHub','buildingAccessHub','officeHub']);
+    const wanted=new Set(['profile','inventory','maintenanceInventory','needs','queues','receiving','vendors','kitchenHub','maintenanceHub','hallHub','transportationHub','buildingAccessHub','hvacHub','dwSpectrumHub','officeHub']);
     nav.querySelectorAll('.tab').forEach(btn=>{
       if(btn.id==='kitchenMainTab'||btn.id==='buildingAccessMainTab'||btn.id==='officeMainTab'||btn.id==='maintenanceMainTab'||btn.id==='hallMainTab'||btn.id==='transportationMainTab')return;
       if(!wanted.has(btn.dataset.tab)) btn.style.display='none';
