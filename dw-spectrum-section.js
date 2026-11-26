@@ -15,8 +15,10 @@
       btn.innerHTML='<span class="dw-tab-mark">DW</span><span>DW Spectrum</span>';
     }
     const buildingAccess=nav.querySelector('#buildingAccessMainTab');
-    if(buildingAccess&&buildingAccess.nextElementSibling!==btn)buildingAccess.after(btn);
-    else if(!buildingAccess&&!btn.parentElement)nav.appendChild(btn);
+    const hvac=nav.querySelector('#hvacMainTab');
+    const placementAnchor=hvac||buildingAccess;
+    if(placementAnchor&&placementAnchor.nextElementSibling!==btn)placementAnchor.after(btn);
+    else if(!placementAnchor&&!btn.parentElement)nav.appendChild(btn);
 
     let section=document.querySelector('#dwSpectrumHub');
     if(!section){
