@@ -58,5 +58,20 @@ async function openVendor(id){let v=vendorById(id)||{id:'',vendor:'',contact_per
 $('#poClose').onclick=()=>$('#poModal').classList.remove('show');$('#search').oninput=renderInventory;$('#vf').onchange=renderInventory;$$('.tab').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));$('#showpass').onclick=e=>togglePass('#password',e.currentTarget);$('#shownewpass').onclick=e=>togglePass('#newpass',e.currentTarget);$('#signin').onclick=async()=>{let r=await db.auth.signInWithPassword({email:$('#email').value.trim(),password:$('#password').value});$('#authmsg').textContent=r.error?r.error.message:'Signed in'};$('#signup').onclick=async()=>{let r=await db.auth.signUp({email:$('#email').value.trim(),password:$('#password').value});$('#authmsg').textContent=r.error?r.error.message:'Account created'};$('#forgot').onclick=async()=>{let r=await db.auth.resetPasswordForEmail($('#email').value.trim(),{redirectTo:SITE});$('#authmsg').textContent=r.error?r.error.message:'Reset email sent'};$('#saveNewPass').onclick=async()=>{let r=await db.auth.updateUser({password:$('#newpass').value});$('#resetmsg').textContent=r.error?r.error.message:'Password updated'};$('#resetCancel').onclick=()=>$('#resetModal').classList.remove('show');$('#signout').onclick=()=>db.auth.signOut();function subscribe(){db.channel('yma-live').on('postgres_changes',{event:'*',schema:'public',table:'inventory_items'},loadAll).on('postgres_changes',{event:'*',schema:'public',table:'vendors'},loadAll).on('postgres_changes',{event:'*',schema:'public',table:'vendor_order_queue'},loadAll).subscribe()}
 boot();
 </script>
+<script>
+(()=>{
+  const build='20261126-dashboard-tabs-11';
+  const files=['db-bridge.js','vendor-status.js','purchase-order-enhancements.js','masoras-profile.js','powered-branding.js','copyright-branding.js','global-refresh.js','inventory-split.js','masoras-branding.js','kitchen-section.js','kitchen-menu-calendar.js','kitchen-menu-fastfix.js','kitchen-menu-month-colors.js','kitchen-menu-print-footer.js','kitchen-menu-print-professional.js','kitchen-prep-amount.js','kitchen-potato-kugel.js','kitchen-recipes.js','kitchen-todo.js','maintenance-section.js','maintenance-todo.js','todo-polish.js','todo-assignment-enhancements.js','hall-section.js','transportation-section.js','building-access-section.js','hvac-section.js','dw-spectrum-section.js','building-access-door-changes.js','office-section.js','transportation-buses.js','transportation-bus-profile-enhancements.js','transportation-bus-maintenance-documents.js','transportation-drivers.js','transportation-driver-messaging.js','transportation-driver-expiration-fields.js','transportation-driver-save-fix.js','transportation-driver-documents.js','organization-home.js','profile-save-fix.js','vendor-load-fix.js','vendor-order-tab.js','vendor-invoice-email-fix.js','phone-ext.js','queue-consistency-fix.js','dashboard-polish.js','product-barcode-scanner.js','create-order-fix.js','purchase-order-final-fix.js','unit-dropdowns.js','manual-order-vendor-products.js','user-permissions.js','user-invite.js','dashboard-user-name.js','user-language.js','dashboard-greeting.js','dashboard-weather.js','vendor-save-fix.js','stock-check.js','vendor-delivery-schedule.js','product-status.js','inventory-alerts.js','dashboard-tab-colors.js','app-redesign.js'];
+  window.addEventListener('load',()=>{
+    document.title='Masoras Avos';
+    for(const file of files){
+      const script=document.createElement('script');
+      script.src=file+'?build='+encodeURIComponent(build);
+      script.async=false;
+      document.body.appendChild(script);
+    }
+  },{once:true});
+})();
+</script>
 </body>
 </html>
